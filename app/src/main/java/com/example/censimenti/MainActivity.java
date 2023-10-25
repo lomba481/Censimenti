@@ -5,6 +5,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -24,6 +25,8 @@ public class MainActivity extends AppCompatActivity {
     FloatingActionButton addButton;
     String key;
 
+    static DatabaseReference ref;
+
 
 
     @Override
@@ -31,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("comune");
+        ref = FirebaseDatabase.getInstance().getReference("comune");
 
         recyclerView = findViewById(R.id.comuneRecycler);
         toolbar = findViewById(R.id.toolbar);
@@ -52,7 +55,12 @@ public class MainActivity extends AppCompatActivity {
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Intent intent = new Intent(MainActivity.this, AggiungiComune.class);
+                String key = ref.push().getKey();
+                Comune nuovoComune = new Comune("", "");
+                ref.child(key).setValue(nuovoComune);
+                intent.putExtra("key", key);
+                startActivity(intent);
             }
         });
 
