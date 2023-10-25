@@ -22,6 +22,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".AggiungiComune"/>
+        <activity android:name=".EdificiActivity"/>
+        <activity android:name=".AggiungiEdificio"/>
+        <activity android:name=".PlanimetrieActivity"/>
     </application>
 
 </manifest>

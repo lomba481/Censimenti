@@ -6,11 +6,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".EdificiActivity"
+    tools:ignore="MissingDefaultResource">
 
     <TextView
         android:id="@+id/toolbar"
-        android:text="Comuni"
+        android:text="Edifici"
         android:textColor="@color/white"
         android:textStyle="bold"
         android:textSize="25sp"
@@ -26,7 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/toolbar">
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/comuneRecycler"
+            android:id="@+id/edificiRecycler"
             android:background="@color/white"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
