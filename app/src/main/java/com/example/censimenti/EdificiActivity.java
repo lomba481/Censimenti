@@ -4,6 +4,7 @@ import static com.example.censimenti.MainActivity.ref;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.Nullable;
@@ -32,6 +33,8 @@ public class EdificiActivity extends AppCompatActivity {
         setContentView(R.layout.edifici);
         dref = FirebaseDatabase.getInstance().getReference("edificio");
         recyclerView = findViewById(R.id.edificiRecycler);
+        key = getIntent().getStringExtra("key");
+        Log.d("key","BVBCBVCBCVBCVBC    "+ key);
 
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -51,7 +54,7 @@ public class EdificiActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(EdificiActivity.this, AggiungiEdificio.class);
 //                String key = dref.push().getKey();
-                key = getIntent().getStringExtra("key");
+
                 Edificio nuovoEdifico = new Edificio("", "");
                 dref.child(key).setValue(nuovoEdifico);
                 intent.putExtra("key", key);
