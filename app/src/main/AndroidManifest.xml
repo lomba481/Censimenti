@@ -25,6 +25,7 @@
         <activity android:name=".EdificiActivity"/>
         <activity android:name=".AggiungiEdificio"/>
         <activity android:name=".PlanimetrieActivity"/>
+        <activity android:name=".AggiungiPlanimetria"/>
     </application>
 
 </manifest>

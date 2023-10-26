@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".EdificiActivity"
+    tools:context=".PlanimetrieActivity"
     tools:ignore="MissingDefaultResource">
 
     <TextView
@@ -27,7 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/toolbar">
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/edificiRecycler"
+            android:id="@+id/planimetrieRecycler"
             android:background="@color/white"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>

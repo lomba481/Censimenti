@@ -1,7 +1,6 @@
 package com.example.censimenti;
 
-import static com.example.censimenti.EdificiActivity.dref;
-import static com.example.censimenti.MainActivity.ref;
+import static com.example.censimenti.EdificiActivity.eRef;
 
 import android.os.Bundle;
 import android.view.View;
@@ -21,7 +20,7 @@ public class AggiungiEdificio extends AppCompatActivity {
     TextInputEditText nomeEdificio, indirizzoEdificio;
 
     Button salva, indietro;
-    String key;
+    String keyCommessa, keyEdificio;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -31,7 +30,8 @@ public class AggiungiEdificio extends AppCompatActivity {
         nomeEdificio = findViewById(R.id.nomeEdificio);
         indirizzoEdificio = findViewById(R.id.indirizzo);
 
-        key = getIntent().getStringExtra("key");
+        keyCommessa = getIntent().getStringExtra("keyCommessa");
+        keyEdificio = getIntent().getStringExtra("keyEdificio");
 
         salva = findViewById(R.id.saveBtn);
         indietro = findViewById(R.id.backBtn);
@@ -44,9 +44,10 @@ public class AggiungiEdificio extends AppCompatActivity {
                 Edificio edificio = new Edificio();
                 edificio.setNome(nome);
                 edificio.setIndirizzo(indirizzo);
-                dref.child(key).setValue(edificio);
+                edificio.setKey(keyCommessa);
+                eRef.child(keyCommessa).child(keyEdificio).setValue(edificio);
 
-                dref.addValueEventListener(new ValueEventListener() {
+                eRef.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         Toast.makeText(AggiungiEdificio.this, "dati aggiunti", Toast.LENGTH_SHORT).show();
