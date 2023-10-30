@@ -1,11 +1,12 @@
 package com.example.censimenti;
 
 import static com.example.censimenti.CensimentiInterni.lRef;
-import static com.example.censimenti.PlanimetrieActivity.pRef;
+import static com.example.censimenti.CensimentiInterni.lref1;
 
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -23,6 +24,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -41,12 +43,13 @@ public class AggiungiLampade extends AppCompatActivity {
     ImageView imageView;
     float x, y;
 
-    Uri uri;
+    Uri uri = null;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.aggiungi_lampada);
+
 
         sorgenteLampada = findViewById(R.id.sorgenteLampada);
         modelloLampada = findViewById(R.id.modelloLampada);
@@ -54,9 +57,9 @@ public class AggiungiLampade extends AppCompatActivity {
         attaccoLampada = findViewById(R.id.attaccoLampada);
         keyPlanimetria = getIntent().getStringExtra("keyPlanimetria");
         keyLampada = getIntent().getStringExtra("keyLampada");
+        Log.d("sasso", keyPlanimetria);
         x = getIntent().getFloatExtra("x", 0);
         y = getIntent().getFloatExtra("y", 0);
-
 
         salva = findViewById(R.id.saveBtn);
         indietro = findViewById(R.id.backBtn);
@@ -67,6 +70,29 @@ public class AggiungiLampade extends AppCompatActivity {
         String[] opzioniTipoApparecchio = {"Stagna", "Proiettore", "Incasso"};
         autoCompleteMenu(opzioniTipoLampada, sorgenteLampada);
         autoCompleteMenu(opzioniTipoApparecchio, modelloLampada);
+
+        DatabaseReference lref2 = lref1.child(keyLampada);
+        lref2.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    String tipo = snapshot.child("tipo").getValue(String.class);
+                    String sorgente = snapshot.child("sorgente").getValue(String.class);
+                    String attacco = snapshot.child("attacco").getValue(String.class);
+                    String potenza = snapshot.child("potenza").getValue(String.class);
+                    sorgenteLampada.setText(sorgente);
+                    modelloLampada.setText(tipo);
+                    potenzaLampada.setText(potenza);
+                    attaccoLampada.setText(attacco);
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
         scegliImmagine.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,6 +106,8 @@ public class AggiungiLampade extends AppCompatActivity {
         salva.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+
                 // recupero i dati per poi eseguire salvataggio in firebase
 
                 Lampada lampada = new Lampada(modelloLampada.getText().toString(),
@@ -89,11 +117,26 @@ public class AggiungiLampade extends AppCompatActivity {
                         null,
                         keyPlanimetria,
                         x, y);
-                try {
-                    addDataFirebase(lampada);
-                } catch (FileNotFoundException e) {
-                    throw new RuntimeException(e);
-                }
+//                try {
+//                    if (uri == null) {
+                        lampada.setFoto("");
+                        lRef.child(keyPlanimetria).child(keyLampada).setValue(lampada);
+//                    }
+//                    else {
+//                        addDataFirebase(lampada);
+//                    }
+//                lRef.child(keyPlanimetria).child(keyLampada).setValue(lampada);
+
+                    Intent intent = new Intent();
+                    intent.putExtra("tipo", lampada.getTipo());
+                    intent.putExtra("sorgente", lampada.getSorgente());
+                    setResult(RESULT_OK, intent);
+                    finish();
+//                } catch (FileNotFoundException e) {
+//                    throw new RuntimeException(e);
+//                }
+
+
 
             }
         });
@@ -101,7 +144,9 @@ public class AggiungiLampade extends AppCompatActivity {
         indietro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                Intent intent = new Intent();
+                setResult(RESULT_CANCELED, intent);
+            finish();
             }
         });
 
@@ -132,8 +177,10 @@ public class AggiungiLampade extends AppCompatActivity {
                     lRef.child(keyPlanimetria).child(keyLampada).setValue(lampada);
                 });
             }
+
         });
-        pRef.addValueEventListener(new ValueEventListener() {
+
+        lRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 Toast.makeText(AggiungiLampade.this, "dati aggiunti", Toast.LENGTH_SHORT).show();

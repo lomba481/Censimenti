@@ -1,5 +1,7 @@
 package com.example.censimenti;
 
+import com.google.firebase.database.annotations.NotNull;
+
 public class Lampada {
     String tipo, sorgente, potenza, attacco, foto, key;
     float x, y;
@@ -7,7 +9,7 @@ public class Lampada {
     public Lampada() {
     }
 
-    public Lampada(String tipo, String sorgente, String potenza, String attacco, String foto, String key, float x, float y) {
+    public Lampada(String tipo, String sorgente, String potenza, String attacco, @NotNull String foto, String key, float x, float y) {
         this.tipo = tipo;
         this.sorgente = sorgente;
         this.potenza = potenza;
