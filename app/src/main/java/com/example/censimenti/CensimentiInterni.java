@@ -25,7 +25,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -67,30 +66,32 @@ public class CensimentiInterni extends AppCompatActivity {
         });
 
 
-        lRef.child(keyPlanimetria).addListenerForSingleValueEvent(new ValueEventListener() {
+        DatabaseReference lref1 = lRef.child(keyPlanimetria);
+        lref1.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for(DataSnapshot dataSnapshot : snapshot.getChildren()){
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
 
-                    String tipo = (String) (dataSnapshot.child("tipo").getValue());
+                    String tipo = dataSnapshot.child("tipo").getValue(String.class);
                     String sorgente = (String) (dataSnapshot.child("sorgente").getValue());
                     String attacco = (String) (dataSnapshot.child("attacco").getValue());
-                    String x = (String) (dataSnapshot.child("x").getValue());
-                    String y = (String) (dataSnapshot.child("y").getValue());
+                    float x = dataSnapshot.child("x").getValue(Float.class);
+                    float y = dataSnapshot.child("y").getValue(Float.class);
+
+
+                    Log.d ("coords", x + " " + y );
+
 
                     CircleImageView circleImageView = new CircleImageView(getApplicationContext());
                     circleImageView.setImageResource(R.drawable.verde);
-                    circleImageView.setX(Float.parseFloat(x));
-                    circleImageView.setY(Float.parseFloat(y));
-//
-//                    int width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, getResources().getDisplayMetrics());
-//                    int height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, getResources().getDisplayMetrics());
-//                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(width, height);
-//                    circleImageView.setLayoutParams(params);
+                    circleImageView.setX(x);
+                    circleImageView.setY(y);
+
+                    int width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, getResources().getDisplayMetrics());
+                    int height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, getResources().getDisplayMetrics());
+                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(width, height);
+                    circleImageView.setLayoutParams(params);
                     relativeLayout.addView(circleImageView);
-
-
-
 
 
                 }
@@ -150,6 +151,7 @@ public class CensimentiInterni extends AppCompatActivity {
 
         x = event.getX();
         y = event.getY();
+
 
         circleImageView.setX(x);
         circleImageView.setY(y);
