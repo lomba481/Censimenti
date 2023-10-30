@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -31,7 +33,8 @@ import java.io.InputStream;
 
 public class AggiungiLampade extends AppCompatActivity {
 
-    TextInputEditText nomeLampada, descrLampada;
+    TextInputEditText potenzaLampada, attaccoLampada;
+    AutoCompleteTextView sorgenteLampada, modelloLampada;
     Button salva, indietro;
     String keyPlanimetria, keyLampada;
     RelativeLayout scegliImmagine;
@@ -45,8 +48,10 @@ public class AggiungiLampade extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.aggiungi_lampada);
 
-        nomeLampada = findViewById(R.id.nomeLampada);
-        descrLampada = findViewById(R.id.descrLampada);
+        sorgenteLampada = findViewById(R.id.sorgenteLampada);
+        modelloLampada = findViewById(R.id.modelloLampada);
+        potenzaLampada = findViewById(R.id.potenzaLampada);
+        attaccoLampada = findViewById(R.id.attaccoLampada);
         keyPlanimetria = getIntent().getStringExtra("keyPlanimetria");
         keyLampada = getIntent().getStringExtra("keyLampada");
         x = getIntent().getFloatExtra("x", 0);
@@ -57,6 +62,11 @@ public class AggiungiLampade extends AppCompatActivity {
         indietro = findViewById(R.id.backBtn);
         scegliImmagine = findViewById(R.id.ScegliImmagine);
         imageView = findViewById(R.id.ImageView);
+
+        String[] opzioniTipoLampada = {"Led", "Fluorescente", "Scarica"};
+        String[] opzioniTipoApparecchio = {"Stagna", "Proiettore", "Incasso"};
+        autoCompleteMenu(opzioniTipoLampada, sorgenteLampada);
+        autoCompleteMenu(opzioniTipoApparecchio, modelloLampada);
 
         scegliImmagine.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,14 +80,15 @@ public class AggiungiLampade extends AppCompatActivity {
         salva.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String nome = nomeLampada.getText().toString();
-                String descr = descrLampada.getText().toString();
-                Lampada lampada = new Lampada();
-                lampada.setNome(nome);
-                lampada.setDescrizione(descr);
-                lampada.setKey(keyPlanimetria);
-                lampada.setY(y);
-                lampada.setX(x);
+                // recupero i dati per poi eseguire salvataggio in firebase
+
+                Lampada lampada = new Lampada(modelloLampada.getText().toString(),
+                        sorgenteLampada.getText().toString(),
+                        potenzaLampada.getText().toString(),
+                        attaccoLampada.getText().toString(),
+                        null,
+                        keyPlanimetria,
+                        x, y);
                 try {
                     addDataFirebase(lampada);
                 } catch (FileNotFoundException e) {
@@ -95,6 +106,7 @@ public class AggiungiLampade extends AppCompatActivity {
         });
 
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -129,8 +141,15 @@ public class AggiungiLampade extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(AggiungiLampade.this, "Non riesco ad inserire i dati"+ error, Toast.LENGTH_SHORT).show();
+                Toast.makeText(AggiungiLampade.this, "Non riesco ad inserire i dati" + error, Toast.LENGTH_SHORT).show();
             }
         });
     }
+
+    public void autoCompleteMenu(String[] elenco, AutoCompleteTextView autoCompleteTextView) {
+
+        ArrayAdapter arrayAdapter = new ArrayAdapter(this, R.layout.drop_down_layout, elenco);
+        autoCompleteTextView.setAdapter(arrayAdapter);
+    }
+
 }

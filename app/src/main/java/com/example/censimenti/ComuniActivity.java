@@ -2,6 +2,7 @@ package com.example.censimenti;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,6 +33,7 @@ public class ComuniActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         ref = FirebaseDatabase.getInstance().getReference("comune");
+        Log.d("seba",""+ ref);
 
         recyclerView = findViewById(R.id.comuneRecycler);
 

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.Icon;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
@@ -20,8 +21,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -33,7 +38,7 @@ public class CensimentiInterni extends AppCompatActivity {
 
     static DatabaseReference lRef;
 
-    String keyPlanimetria, keyLampada ;
+    String keyPlanimetria, keyLampada;
     String imageUrl;
     float x, y;
 
@@ -61,6 +66,41 @@ public class CensimentiInterni extends AppCompatActivity {
             }
         });
 
+
+        lRef.child(keyPlanimetria).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot dataSnapshot : snapshot.getChildren()){
+
+                    String tipo = (String) (dataSnapshot.child("tipo").getValue());
+                    String sorgente = (String) (dataSnapshot.child("sorgente").getValue());
+                    String attacco = (String) (dataSnapshot.child("attacco").getValue());
+                    String x = (String) (dataSnapshot.child("x").getValue());
+                    String y = (String) (dataSnapshot.child("y").getValue());
+
+                    CircleImageView circleImageView = new CircleImageView(getApplicationContext());
+                    circleImageView.setImageResource(R.drawable.verde);
+                    circleImageView.setX(Float.parseFloat(x));
+                    circleImageView.setY(Float.parseFloat(y));
+//
+//                    int width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, getResources().getDisplayMetrics());
+//                    int height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, getResources().getDisplayMetrics());
+//                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(width, height);
+//                    circleImageView.setLayoutParams(params);
+                    relativeLayout.addView(circleImageView);
+
+
+
+
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
 
         switchBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -120,8 +160,8 @@ public class CensimentiInterni extends AppCompatActivity {
         circleImageView.setLayoutParams(params);
         relativeLayout.addView(circleImageView);
 
-        Lampada lampada = new Lampada("", "", "","", 0,0);
-        keyLampada= lRef.push().getKey();
+        Lampada lampada = new Lampada("", "", "", "", "", "", 0, 0);
+        keyLampada = lRef.push().getKey();
         if (keyLampada != null) lRef.child(keyPlanimetria).child(keyLampada).setValue(lampada);
     }
 
@@ -140,7 +180,7 @@ public class CensimentiInterni extends AppCompatActivity {
         lRef.child(keyPlanimetria).child(keyLampada).removeValue();
     }
 
-    public void loadUrlAsDrawable (String url, Context context, final Icon.OnDrawableLoadedListener listener) {
+    public void loadUrlAsDrawable(String url, Context context, final Icon.OnDrawableLoadedListener listener) {
         Glide.with(context)
                 .load(url)
                 .into(new CustomTarget<Drawable>() {

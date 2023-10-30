@@ -2,6 +2,7 @@ package com.example.censimenti;
 
 import static com.example.censimenti.ComuniActivity.ref;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -63,6 +64,7 @@ public class AggiungiComune extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 finish();
+
             }
         });
 

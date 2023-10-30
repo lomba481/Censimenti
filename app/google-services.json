@@ -1,13 +1,14 @@
 {
   "project_info": {
-    "project_number": "320045606297",
-    "project_id": "censimenti-79184",
-    "storage_bucket": "censimenti-79184.appspot.com"
+    "project_number": "896118848323",
+    "firebase_url": "https://censimenti-1602f-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "censimenti-1602f",
+    "storage_bucket": "censimenti-1602f.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:320045606297:android:3502bf359d6e789e6cdf08",
+        "mobilesdk_app_id": "1:896118848323:android:bf320847d29035e6750df6",
         "android_client_info": {
           "package_name": "com.example.censimenti"
         }
@@ -15,7 +16,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCTUL7RPwVEhdqOMRlOY5C983Ngxa9adaE"
+          "current_key": "AIzaSyAA8QS5PcDr0F3xkCu_hOoxfG-97dh6M1o"
         }
       ],
       "services": {

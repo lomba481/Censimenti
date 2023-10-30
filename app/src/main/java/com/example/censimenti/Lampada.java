@@ -1,64 +1,84 @@
 package com.example.censimenti;
 
 public class Lampada {
-    String nome, descrizione, foto, key;
+    String tipo, sorgente, potenza, attacco, foto, key;
     float x, y;
-    public Lampada () {}
 
-    public Lampada(String nome, String descrizione, String foto, String key, int x, int y) {
-        this.nome = nome;
-        this.descrizione = descrizione;
+    public Lampada() {
+    }
+
+    public Lampada(String tipo, String sorgente, String potenza, String attacco, String foto, String key, float x, float y) {
+        this.tipo = tipo;
+        this.sorgente = sorgente;
+        this.potenza = potenza;
+        this.attacco = attacco;
         this.foto = foto;
         this.key = key;
         this.x = x;
         this.y = y;
     }
 
-    public void setKey(String key) {
-        this.key = key;
+    public String getTipo() {
+        return tipo;
     }
 
-    public String getKey() {
-        return key;
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public String getSorgente() {
+        return sorgente;
     }
 
-    public void setDescrizione(String descrizione) {
-        this.descrizione = descrizione;
+    public void setSorgente(String sorgente) {
+        this.sorgente = sorgente;
     }
 
-    public void setFoto(String foto) {
-        this.foto = foto;
+    public String getPotenza() {
+        return potenza;
     }
 
-    public void setX(float x) {
-        this.x = x;
+    public void setPotenza(String potenza) {
+        this.potenza = potenza;
     }
 
-    public void setY(float y) {
-        this.y = y;
+    public String getAttacco() {
+        return attacco;
     }
 
-    public String getNome() {
-        return nome;
-    }
-
-    public String getDescrizione() {
-        return descrizione;
+    public void setAttacco(String attacco) {
+        this.attacco = attacco;
     }
 
     public String getFoto() {
         return foto;
     }
 
+    public void setFoto(String foto) {
+        this.foto = foto;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
     public float getX() {
         return x;
     }
 
+    public void setX(float x) {
+        this.x = x;
+    }
+
     public float getY() {
         return y;
+    }
+
+    public void setY(float y) {
+        this.y = y;
     }
 }
