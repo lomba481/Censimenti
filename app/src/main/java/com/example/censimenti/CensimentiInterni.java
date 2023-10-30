@@ -3,6 +3,7 @@ package com.example.censimenti;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.Icon;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -35,7 +37,7 @@ public class CensimentiInterni extends AppCompatActivity {
     @SuppressLint("UseSwitchCompatOrMaterialCode")
     Switch switchBtn;
 
-    static DatabaseReference lRef;
+    static DatabaseReference lRef, lref1;
 
     String keyPlanimetria, keyLampada;
     String imageUrl;
@@ -66,15 +68,15 @@ public class CensimentiInterni extends AppCompatActivity {
         });
 
 
-        DatabaseReference lref1 = lRef.child(keyPlanimetria);
+       lref1 = lRef.child(keyPlanimetria);
         lref1.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
 
-                    String tipo = dataSnapshot.child("tipo").getValue(String.class);
-                    String sorgente = (String) (dataSnapshot.child("sorgente").getValue());
-                    String attacco = (String) (dataSnapshot.child("attacco").getValue());
+//                    String tipo = dataSnapshot.child("tipo").getValue(String.class);
+//                    String sorgente = (String) (dataSnapshot.child("sorgente").getValue());
+//                    String attacco = (String) (dataSnapshot.child("attacco").getValue());
                     float x = dataSnapshot.child("x").getValue(Float.class);
                     float y = dataSnapshot.child("y").getValue(Float.class);
 
@@ -113,6 +115,13 @@ public class CensimentiInterni extends AppCompatActivity {
                         @Override
                         public boolean onTouch(View v, MotionEvent event) {
                             addNewCircle(event);
+                            Intent intent = new Intent(CensimentiInterni.this, AggiungiLampade.class);
+                            intent.putExtra("x", x);
+                            intent.putExtra("y", y);
+                            intent.putExtra("keyLampada", keyLampada);
+                            intent.putExtra("keyPlanimetria", keyPlanimetria);
+                            startActivity(intent);
+
                             return false;
                         }
                     });
@@ -120,6 +129,7 @@ public class CensimentiInterni extends AppCompatActivity {
                     for (int i = 0; i < relativeLayout.getChildCount(); i++) {
                         View child = relativeLayout.getChildAt(i);
                         if (child instanceof CircleImageView) {
+
                             child.setOnLongClickListener(new View.OnLongClickListener() {
                                 @Override
                                 public boolean onLongClick(View v) {
@@ -131,6 +141,8 @@ public class CensimentiInterni extends AppCompatActivity {
                             child.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
+//                                    float CircleX = v.getX();
+//                                    float CircleY = v.getY();
                                     handleImageClick((CircleImageView) v);
                                 }
                             });
@@ -144,6 +156,7 @@ public class CensimentiInterni extends AppCompatActivity {
 
     }
 
+    @SuppressLint("ResourceAsColor")
     private void addNewCircle(MotionEvent event) {
 
         CircleImageView circleImageView = new CircleImageView(getApplicationContext());
@@ -162,19 +175,60 @@ public class CensimentiInterni extends AppCompatActivity {
         circleImageView.setLayoutParams(params);
         relativeLayout.addView(circleImageView);
 
-        Lampada lampada = new Lampada("", "", "", "", "", "", 0, 0);
+        TextView textView = new TextView(getApplicationContext());
+        textView.setBackgroundColor(Color.BLUE);
+        textView.setTextColor(Color.WHITE);
+        textView.setTextSize(10);
+        textView.setText("tipo");
+//        textView.setGravity(0);
+
+        textView.setX(x);
+        textView.setY(y-40);
+
+        int width1 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, getResources().getDisplayMetrics());
+        int height1 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, getResources().getDisplayMetrics());
+        textView.setWidth(width1);
+        textView.setHeight(height1);
+//        RelativeLayout.LayoutParams params1 = new RelativeLayout.LayoutParams(width1, height1);
+//        textView.setLayoutParams(params);
+        relativeLayout.addView(textView);
+
+
+//        Lampada lampada = new Lampada("", "", "", "", "", "", 0, 0);
         keyLampada = lRef.push().getKey();
-        if (keyLampada != null) lRef.child(keyPlanimetria).child(keyLampada).setValue(lampada);
+//        if (keyLampada != null) lRef.child(keyPlanimetria).child(keyLampada).setValue(lampada);
     }
 
     private void handleImageClick(CircleImageView v) {
+
+//        Log.d("alfa", CircleX + " " + CircleY);
         Intent intent = new Intent(CensimentiInterni.this, AggiungiLampade.class);
 //        activityResultLauncher.launch(intent);
         intent.putExtra("x", x);
         intent.putExtra("y", y);
-        intent.putExtra("keyLampada", keyLampada);
-        intent.putExtra("keyPlanimetria", keyPlanimetria);
-        startActivity(intent);
+
+
+        lref1.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    float x1 = dataSnapshot.child("x").getValue(Float.class);
+                    float y1 = dataSnapshot.child("y").getValue(Float.class);
+                    if (v.getX() == x1 && v.getY() == y1) {
+                        keyLampada = dataSnapshot.getKey();
+                        intent.putExtra("keyLampada", keyLampada);
+                        intent.putExtra("keyPlanimetria", keyPlanimetria);
+                        startActivity(intent);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
     }
 
     private void handleImageLongClick(CircleImageView v) {
@@ -197,7 +251,5 @@ public class CensimentiInterni extends AppCompatActivity {
                     }
                 });
     }
-//    interface OnDrawableLoadedListener {
-//        void onDrawableLoaded(Drawable drawable);
-//    }
+
 }

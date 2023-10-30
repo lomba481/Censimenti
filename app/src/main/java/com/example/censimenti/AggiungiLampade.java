@@ -1,11 +1,13 @@
 package com.example.censimenti;
 
 import static com.example.censimenti.CensimentiInterni.lRef;
+import static com.example.censimenti.CensimentiInterni.lref1;
 import static com.example.censimenti.PlanimetrieActivity.pRef;
 
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -23,6 +25,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -48,15 +51,16 @@ public class AggiungiLampade extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.aggiungi_lampada);
 
+
         sorgenteLampada = findViewById(R.id.sorgenteLampada);
         modelloLampada = findViewById(R.id.modelloLampada);
         potenzaLampada = findViewById(R.id.potenzaLampada);
         attaccoLampada = findViewById(R.id.attaccoLampada);
         keyPlanimetria = getIntent().getStringExtra("keyPlanimetria");
         keyLampada = getIntent().getStringExtra("keyLampada");
+        Log.d("sasso", keyPlanimetria);
         x = getIntent().getFloatExtra("x", 0);
         y = getIntent().getFloatExtra("y", 0);
-
 
         salva = findViewById(R.id.saveBtn);
         indietro = findViewById(R.id.backBtn);
@@ -68,10 +72,34 @@ public class AggiungiLampade extends AppCompatActivity {
         autoCompleteMenu(opzioniTipoLampada, sorgenteLampada);
         autoCompleteMenu(opzioniTipoApparecchio, modelloLampada);
 
+        DatabaseReference lref2 = lref1.child(keyLampada);
+        lref2.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    String tipo = snapshot.child("tipo").getValue(String.class);
+                    String sorgente = snapshot.child("sorgente").getValue(String.class);
+                    String attacco = snapshot.child("attacco").getValue(String.class);
+                    String potenza = snapshot.child("potenza").getValue(String.class);
+                    sorgenteLampada.setText(sorgente);
+                    modelloLampada.setText(tipo);
+                    potenzaLampada.setText(potenza);
+                    attaccoLampada.setText(attacco);
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
         scegliImmagine.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ImagePicker.with(AggiungiLampade.this)
+                        .compress(1024)
                         .cameraOnly()
                         .start();
             }
@@ -80,6 +108,8 @@ public class AggiungiLampade extends AppCompatActivity {
         salva.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+
                 // recupero i dati per poi eseguire salvataggio in firebase
 
                 Lampada lampada = new Lampada(modelloLampada.getText().toString(),
