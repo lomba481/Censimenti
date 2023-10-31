@@ -302,6 +302,7 @@ public class CensimentiInterni extends AppCompatActivity {
                 case "Scarica":
                     circleImageView.setImageResource(R.drawable.rosso);
                     break;
+                    //
             }
 //            relativeLayout.addView(circleImageView);
 
