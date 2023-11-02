@@ -51,6 +51,8 @@ public class AggiungiLampade extends AppCompatActivity {
         setContentView(R.layout.aggiungi_lampada);
 
 
+
+
         sorgenteLampada = findViewById(R.id.sorgenteLampada);
         modelloLampada = findViewById(R.id.modelloLampada);
         potenzaLampada = findViewById(R.id.potenzaLampada);
@@ -117,36 +119,38 @@ public class AggiungiLampade extends AppCompatActivity {
                         null,
                         keyPlanimetria,
                         x, y);
-//                try {
-//                    if (uri == null) {
+                try {
+                    if (uri == null) {
                         lampada.setFoto("");
                         lRef.child(keyPlanimetria).child(keyLampada).setValue(lampada);
-//                    }
-//                    else {
-//                        addDataFirebase(lampada);
-//                    }
-//                lRef.child(keyPlanimetria).child(keyLampada).setValue(lampada);
+                        lRef.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                Toast.makeText(AggiungiLampade.this, "dati aggiunti", Toast.LENGTH_SHORT).show();
+                            }
 
-                    Intent intent = new Intent();
-                    intent.putExtra("tipo", lampada.getTipo());
-                    intent.putExtra("sorgente", lampada.getSorgente());
-                    setResult(RESULT_OK, intent);
-                    finish();
-//                } catch (FileNotFoundException e) {
-//                    throw new RuntimeException(e);
-//                }
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                Toast.makeText(AggiungiLampade.this, "Non riesco ad inserire i dati" + error, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                        finish();
 
-
-
+                    }
+                    else {
+                        addDataFirebase(lampada);
+                        finish();
+                    }
+                } catch (FileNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
 
         indietro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent();
-                setResult(RESULT_CANCELED, intent);
-            finish();
+                finish();
             }
         });
 
