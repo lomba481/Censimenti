@@ -3,11 +3,14 @@ package com.example.censimenti;
 import static com.example.censimenti.CensimentiInterni.lRef;
 import static com.example.censimenti.CensimentiInterni.lref1;
 
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.Display;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -50,7 +53,13 @@ public class AggiungiLampade extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.aggiungi_lampada);
 
+        WindowManager windowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+        Display display = windowManager.getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
 
+        int larghezzaSchermo = size.x;
+        int altezzaSchermo = size.y;
 
 
         sorgenteLampada = findViewById(R.id.sorgenteLampada);
@@ -59,9 +68,11 @@ public class AggiungiLampade extends AppCompatActivity {
         attaccoLampada = findViewById(R.id.attaccoLampada);
         keyPlanimetria = getIntent().getStringExtra("keyPlanimetria");
         keyLampada = getIntent().getStringExtra("keyLampada");
-        Log.d("sasso", keyPlanimetria);
         x = getIntent().getFloatExtra("x", 0);
         y = getIntent().getFloatExtra("y", 0);
+
+        float Kx = larghezzaSchermo / x;
+        float Ky = altezzaSchermo / y;
 
         salva = findViewById(R.id.saveBtn);
         indietro = findViewById(R.id.backBtn);
@@ -118,7 +129,7 @@ public class AggiungiLampade extends AppCompatActivity {
                         attaccoLampada.getText().toString(),
                         null,
                         keyPlanimetria,
-                        x, y);
+                        x, y, Kx, Ky);
                 try {
                     if (uri == null) {
                         lampada.setFoto("");
