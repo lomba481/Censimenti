@@ -1,15 +1,13 @@
 package com.example.censimenti;
 
-import com.google.firebase.database.annotations.NotNull;
-
 public class Lampada {
     String tipo, sorgente, potenza, attacco, foto, key;
-    float x, y;
+    float x, y, Kx, Ky;
 
     public Lampada() {
     }
 
-    public Lampada(String tipo, String sorgente, String potenza, String attacco, @NotNull String foto, String key, float x, float y) {
+    public Lampada(String tipo, String sorgente, String potenza, String attacco, String foto, String key, float x, float y, float Kx, float Ky) {
         this.tipo = tipo;
         this.sorgente = sorgente;
         this.potenza = potenza;
@@ -18,6 +16,24 @@ public class Lampada {
         this.key = key;
         this.x = x;
         this.y = y;
+        this.Kx = Kx;
+        this.Ky = Ky;
+    }
+
+    public void setKx(float kx) {
+        Kx = kx;
+    }
+
+    public void setKy(float ky) {
+        Ky = ky;
+    }
+
+    public float getKx() {
+        return Kx;
+    }
+
+    public float getKy() {
+        return Ky;
     }
 
     public String getTipo() {

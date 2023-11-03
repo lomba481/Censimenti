@@ -21,7 +21,7 @@
             android:layout_height="60dp"
             android:layout_centerVertical="true"
             android:padding="8dp"
-            app:srcCompat="@drawable/baseline_place_24" />
+            app:srcCompat="@drawable/ic_launcher_foreground" />
 
         <LinearLayout
             android:id="@+id/layout"
@@ -31,30 +31,25 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/comune"
+                android:id="@+id/utente"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="4dp"
-                android:text="Comune"
+                android:text="User"
                 android:textColor="@color/white"
                 android:textSize="24sp"
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/nCommessa"
+                android:id="@+id/email"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="4dp"
-                android:text="Commessa"
+                android:text="e-mail"
                 android:textColor="@color/white"
                 android:textSize="20sp" />
 
         </LinearLayout>
-<!--        <ImageView-->
-<!--            android:layout_width="60dp"-->
-<!--            android:layout_height="60dp"-->
-<!--            android:layout_centerVertical="true" />-->
-
 
     </RelativeLayout>
 

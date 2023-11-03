@@ -1,4 +1,4 @@
-package com.example.censimenti;
+package com.example.censimenti.Utenti;
 
 public class Utente {
 

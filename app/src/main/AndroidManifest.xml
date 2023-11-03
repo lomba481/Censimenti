@@ -22,7 +22,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AggiungiUtente" />
+        <activity android:name=".Utenti.AggiungiUtente" />
         <activity android:name=".AggiungiComune" />
         <activity android:name=".EdificiActivity" />
         <activity android:name=".AggiungiEdificio" />
@@ -30,7 +30,8 @@
         <activity android:name=".AggiungiPlanimetria" />
         <activity android:name=".CensimentiInterni" />
         <activity android:name=".AggiungiLampade" />
-        <activity android:name=".LoginActivity"/>
+        <activity android:name=".Login.LoginActivity"/>
+        <activity android:name=".Utenti.UtentiActivity"/>
     </application>
 
 </manifest>

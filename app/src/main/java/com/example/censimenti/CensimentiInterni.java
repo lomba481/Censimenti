@@ -5,15 +5,16 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.Icon;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
@@ -48,12 +49,20 @@ public class CensimentiInterni extends AppCompatActivity {
     String keyPlanimetria, keyLampada;
     String imageUrl;
     float x, y;
+    int larghezzaSchermo, altezzaSchermo;
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.censimento);
+        WindowManager windowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+        Display display = windowManager.getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+
+        larghezzaSchermo = size.x;
+        altezzaSchermo = size.y;
 
         relativeLayout = findViewById(R.id.relativeLayout);
         switchBtn = findViewById(R.id.switchBtn);
@@ -75,8 +84,7 @@ public class CensimentiInterni extends AppCompatActivity {
 
 
        lref1 = lRef.child(keyPlanimetria);
-        recuperaDati();
-
+       recuperaDati();
 
         switchBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @SuppressLint("ClickableViewAccessibility")
@@ -130,15 +138,19 @@ public class CensimentiInterni extends AppCompatActivity {
 
         circleImageView = new CircleImageView(getApplicationContext());
 
-        x = event.getX();
-        y = event.getY();
+        float translate = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics());
+
+        x = event.getX() - (larghezzaSchermo/80);
+        y = event.getY() - (altezzaSchermo/128);
+//        x = event.getX();
+//        y = event.getY();
 
         circleImageView.setX(x);
         circleImageView.setY(y);
 
         int width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, getResources().getDisplayMetrics());
         int height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, getResources().getDisplayMetrics());
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(width, height);
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(larghezzaSchermo/40, altezzaSchermo/64);
         circleImageView.setLayoutParams(params);
 
 
@@ -152,9 +164,6 @@ public class CensimentiInterni extends AppCompatActivity {
         textView.setX(x-5);
         textView.setY(y-50);
 
-        Display display = getWindowManager().getDefaultDisplay();
-        float n = display.getHeight();
-        Log.d("frfr", ""+ n+ " -------  "+y);
 
         int width1 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, getResources().getDisplayMetrics());
         int height1 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, getResources().getDisplayMetrics());
@@ -171,8 +180,14 @@ public class CensimentiInterni extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    float x1 = dataSnapshot.child("x").getValue(Float.class);
-                    float y1 = dataSnapshot.child("y").getValue(Float.class);
+//                    float x1 = dataSnapshot.child("x").getValue(Float.class);
+//                    float y1 = dataSnapshot.child("y").getValue(Float.class);
+
+                    float Kx = dataSnapshot.child("kx").getValue(Float.class);
+                    float Ky = dataSnapshot.child("ky").getValue(Float.class);
+                    float x1 = larghezzaSchermo / Kx;
+                    float y1 = altezzaSchermo / Ky;
+
                     if (v.getX() == x1 && v.getY() == y1) {
                         keyLampada = dataSnapshot.getKey();
                         intent.putExtra("keyLampada", keyLampada);
@@ -198,8 +213,14 @@ public class CensimentiInterni extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    float x1 = dataSnapshot.child("x").getValue(Float.class);
-                    float y1 = dataSnapshot.child("y").getValue(Float.class);
+//                    float x1 = dataSnapshot.child("x").getValue(Float.class);
+//                    float y1 = dataSnapshot.child("y").getValue(Float.class);
+
+                    float Kx = dataSnapshot.child("kx").getValue(Float.class);
+                    float Ky = dataSnapshot.child("ky").getValue(Float.class);
+                    float x1 = larghezzaSchermo / Kx;
+                    float y1 = altezzaSchermo / Ky;
+
                     if (v.getX() == x1 && v.getY() == y1) {
                         keyLampada = dataSnapshot.getKey();
                         AlertDialog.Builder builder = new AlertDialog.Builder(CensimentiInterni.this);
@@ -257,14 +278,18 @@ public class CensimentiInterni extends AppCompatActivity {
     }
 
     private void recuperaDati() {
+
+
         lref1.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
 
                     String sorgente = (String) (dataSnapshot.child("sorgente").getValue());
-                    float x = dataSnapshot.child("x").getValue(Float.class);
-                    float y = dataSnapshot.child("y").getValue(Float.class);
+//                    float xRaw = dataSnapshot.child("x").getValue(Float.class);
+//                    float yRaw = dataSnapshot.child("y").getValue(Float.class);
+                    float Kx = dataSnapshot.child("kx").getValue(Float.class);
+                    float Ky = dataSnapshot.child("ky").getValue(Float.class);
 
 
                     circleImageView = new CircleImageView(getApplicationContext());
@@ -281,13 +306,19 @@ public class CensimentiInterni extends AppCompatActivity {
 
                     }
 
+                    float x = larghezzaSchermo / Kx;
+                    float y = altezzaSchermo / Ky;
+
 
                     circleImageView.setX(x);
                     circleImageView.setY(y);
 
-                    int width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, getResources().getDisplayMetrics());
-                    int height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, getResources().getDisplayMetrics());
-                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(width, height);
+//                    int width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, getResources().getDisplayMetrics());
+//                    int height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, getResources().getDisplayMetrics());
+                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(larghezzaSchermo/40, altezzaSchermo/64);
+//                    float p = larghezzaSchermo / width;
+//                    float pp = altezzaSchermo / height;
+//                    Log.d("wawa", "" + p + " -- " + pp);
                     circleImageView.setLayoutParams(params);
                     relativeLayout.addView(circleImageView);
 
@@ -306,7 +337,7 @@ public class CensimentiInterni extends AppCompatActivity {
                     int height1 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, getResources().getDisplayMetrics());
                     textView.setWidth(width1);
                     textView.setHeight(height1);
-                    relativeLayout.addView(textView);
+//                    relativeLayout.addView(textView);
 
 
 
