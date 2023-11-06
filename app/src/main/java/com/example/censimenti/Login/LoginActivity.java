@@ -1,4 +1,4 @@
-package com.example.censimenti;
+package com.example.censimenti.Login;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,6 +12,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.censimenti.ComuniActivity;
+import com.example.censimenti.R;
+import com.example.censimenti.Utenti.AggiungiUtente;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;

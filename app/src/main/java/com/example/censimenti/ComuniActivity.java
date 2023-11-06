@@ -10,6 +10,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.censimenti.Utenti.UtentiActivity;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DatabaseReference;
@@ -20,11 +21,10 @@ public class ComuniActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     Toolbar toolbar;
     private AdapterComuni adapterComuni;
-    FloatingActionButton addButton;
+    FloatingActionButton addButton, gestioneUtenti;
     String key;
 
     static DatabaseReference ref;
-
 
 
     @Override
@@ -33,7 +33,7 @@ public class ComuniActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         ref = FirebaseDatabase.getInstance().getReference("comune");
-        Log.d("seba",""+ ref);
+        Log.d("seba", "" + ref);
 
         recyclerView = findViewById(R.id.comuneRecycler);
 
@@ -48,6 +48,7 @@ public class ComuniActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapterComuni);
 
         addButton = findViewById(R.id.addingBtn);
+        gestioneUtenti = findViewById(R.id.gestisciUtenti);
 
 //        Quando clicco sul bottone per aggiungere un comune
         addButton.setOnClickListener(new View.OnClickListener() {
@@ -55,17 +56,24 @@ public class ComuniActivity extends AppCompatActivity {
             public void onClick(View view) {
 //                Salvo la key del nuovo comune appena clicco sul "+"
                 String key = ref.push().getKey();
-
 //                Creo nuovo oggetto Comune
                 Comune nuovoComune = new Comune("", "");
-
 //                Lo inserisco nel database
                 ref.child(key).setValue(nuovoComune);
-
 //                Passo all'activity in cui posso personalizzare il comune che voglio aggiungere
                 Intent intent = new Intent(ComuniActivity.this, AggiungiComune.class);
                 intent.putExtra("key", key);
                 startActivity(intent);
+            }
+        });
+
+
+        gestioneUtenti.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ComuniActivity.this, UtentiActivity.class);
+                startActivity(intent);
+
             }
         });
 

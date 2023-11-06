@@ -1,4 +1,4 @@
-package com.example.censimenti;
+package com.example.censimenti.Utenti;
 
 import android.os.Bundle;
 import android.view.View;
@@ -9,13 +9,10 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.github.dhaval2404.imagepicker.ImagePicker;
+import com.example.censimenti.R;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.FirebaseException;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-
-import java.io.FileNotFoundException;
 
 public class AggiungiUtente extends AppCompatActivity {
 
