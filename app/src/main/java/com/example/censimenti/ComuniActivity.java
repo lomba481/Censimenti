@@ -57,9 +57,9 @@ public class ComuniActivity extends AppCompatActivity {
 //                Salvo la key del nuovo comune appena clicco sul "+"
                 String key = ref.push().getKey();
 //                Creo nuovo oggetto Comune
-                Comune nuovoComune = new Comune("", "");
+
 //                Lo inserisco nel database
-                ref.child(key).setValue(nuovoComune);
+
 //                Passo all'activity in cui posso personalizzare il comune che voglio aggiungere
                 Intent intent = new Intent(ComuniActivity.this, AggiungiComune.class);
                 intent.putExtra("key", key);

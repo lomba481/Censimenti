@@ -24,7 +24,7 @@
             app:srcCompat="@drawable/baseline_house_24" />
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/marker"
             android:orientation="vertical">
@@ -48,6 +48,20 @@
                 android:textColor="@color/white"
                 android:textSize="20sp" />
 
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="0dp">
+
+            <ImageView
+                android:id="@+id/puntini_edificio"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                app:srcCompat="@drawable/baseline_more_horiz_24" />
         </LinearLayout>
 
 

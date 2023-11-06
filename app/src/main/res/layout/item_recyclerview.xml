@@ -19,7 +19,7 @@
             android:id="@+id/marker"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_centerVertical="true"
+            android:layout_marginVertical="5dp"
             android:padding="8dp"
             app:srcCompat="@drawable/baseline_place_24" />
 
@@ -48,13 +48,21 @@
                 android:text="Commessa"
                 android:textColor="@color/white"
                 android:textSize="20sp" />
-
         </LinearLayout>
-<!--        <ImageView-->
-<!--            android:layout_width="60dp"-->
-<!--            android:layout_height="60dp"-->
-<!--            android:layout_centerVertical="true" />-->
 
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="0dp">
+
+            <ImageView
+                android:id="@+id/puntini_comune"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                app:srcCompat="@drawable/baseline_more_horiz_24" />
+        </LinearLayout>
 
     </RelativeLayout>
 

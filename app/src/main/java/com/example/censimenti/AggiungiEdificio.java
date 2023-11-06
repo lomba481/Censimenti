@@ -58,6 +58,7 @@ public class AggiungiEdificio extends AppCompatActivity {
                         Toast.makeText(AggiungiEdificio.this, "Non riesco ad inserire i dati"+ error, Toast.LENGTH_SHORT).show();
                     }
                 });
+                finish();
             }
         });
 

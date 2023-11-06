@@ -4,11 +4,8 @@ import static com.example.censimenti.ComuniActivity.ref;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,7 +24,6 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 public class AggiungiComune extends AppCompatActivity {
@@ -152,7 +148,9 @@ public class AggiungiComune extends AppCompatActivity {
                         Toast.makeText(AggiungiComune.this, "Non riesco ad inserire i dati" + error, Toast.LENGTH_SHORT).show();
                     }
                 });
+                finish();
             }
+
         });
 
         indietro.setOnClickListener(new View.OnClickListener() {

@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
@@ -68,6 +69,8 @@ public class AggiungiLampade extends AppCompatActivity {
         attaccoLampada = findViewById(R.id.attaccoLampada);
         keyPlanimetria = getIntent().getStringExtra("keyPlanimetria");
         keyLampada = getIntent().getStringExtra("keyLampada");
+
+        Log.d("dada", keyPlanimetria + " -- " + keyLampada);
         x = getIntent().getFloatExtra("x", 0);
         y = getIntent().getFloatExtra("y", 0);
 
@@ -115,7 +118,7 @@ public class AggiungiLampade extends AppCompatActivity {
                         .start();
             }
         });
-
+/*
         salva.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -145,16 +148,30 @@ public class AggiungiLampade extends AppCompatActivity {
                                 Toast.makeText(AggiungiLampade.this, "Non riesco ad inserire i dati" + error, Toast.LENGTH_SHORT).show();
                             }
                         });
-                        finish();
+                        //finish();
+
+
 
                     }
                     else {
                         addDataFirebase(lampada);
-                        finish();
+                        //finish();
+
                     }
                 } catch (FileNotFoundException e) {
                     throw new RuntimeException(e);
-                }
+                }                        Intent intent = new Intent(AggiungiLampade.this, CensimentiInterni.class);
+                startActivity(intent);
+            }
+        });
+
+     */
+
+        salva.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+
             }
         });
 
@@ -162,6 +179,7 @@ public class AggiungiLampade extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 finish();
+
             }
         });
 

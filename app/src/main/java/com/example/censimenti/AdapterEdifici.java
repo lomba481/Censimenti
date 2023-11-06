@@ -1,11 +1,14 @@
 package com.example.censimenti;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -14,8 +17,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +30,8 @@ public class AdapterEdifici extends FirebaseRecyclerAdapter<Edificio, AdapterEdi
     private static DatabaseReference myRef;
     CardView cardView;
     Context context;
+    ImageView puntini;
+    String keyCommessa;
     private List<String> lista = new ArrayList<String>();
     private String key = null;
     private int posizione = 0;
@@ -38,16 +46,62 @@ public class AdapterEdifici extends FirebaseRecyclerAdapter<Edificio, AdapterEdi
     protected void onBindViewHolder(@NonNull AdapterEdifici.edificiViewHolder holder, int position, @NonNull Edificio model) {
         holder.nome.setText(model.getNome());
         holder.indirizzo.setText(model.getIndirizzo());
+        myRef = FirebaseDatabase.getInstance().getReference("edificio");
+        DatabaseReference itemRef = getRef(holder.getAbsoluteAdapterPosition());
+        String chiave = itemRef.getKey();
+
+
+        puntini.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setMessage("Cosa vuoi fare?");
+                builder.setPositiveButton("Modifica", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        myRef.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                    String chiave1 = dataSnapshot.getKey();
+                                    if (chiave == chiave1) {
+                                        String nome = dataSnapshot.child("nome").getValue(String.class);
+                                        String indirizzo = dataSnapshot.child("indirizzo").getValue(String.class);
+                                        keyCommessa = dataSnapshot.child("key").getValue(String.class);
+                                        Log.d("wqwq", keyCommessa);
+                                        Intent intent = new Intent(context.getApplicationContext(), AggiungiEdificio.class);
+                                        intent.putExtra("nome", nome);
+                                        intent.putExtra("numCommessa", indirizzo);
+                                        context.startActivity(intent);
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+
+                            }
+                        });
+
+                    }
+                });
+                builder.setNegativeButton("Elimina", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        itemRef.removeValue();
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+        });
 
         cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                myRef = FirebaseDatabase.getInstance().getReference("edificio");
-                DatabaseReference itemRef = getRef(holder.getAbsoluteAdapterPosition());
-                String chiave = itemRef.getKey();
-                Log.d("chiave", chiave);
-
                 Intent intent = new Intent(context.getApplicationContext(), PlanimetrieActivity.class);
                 intent.putExtra("key", chiave);
                 context.startActivity(intent);
@@ -67,6 +121,7 @@ public class AdapterEdifici extends FirebaseRecyclerAdapter<Edificio, AdapterEdi
         public edificiViewHolder(View itemView) {
             super(itemView);
             context = itemView.getContext();
+            puntini = itemView.findViewById(R.id.puntini_edificio);
             nome = itemView.findViewById(R.id.edificio);
             indirizzo = itemView.findViewById(R.id.indirizzo);
             cardView = itemView.findViewById(R.id.cardView);

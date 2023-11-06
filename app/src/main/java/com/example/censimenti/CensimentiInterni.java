@@ -190,6 +190,8 @@ public class CensimentiInterni extends AppCompatActivity {
 
                     if (v.getX() == x1 && v.getY() == y1) {
                         keyLampada = dataSnapshot.getKey();
+                        intent.putExtra("x", x1);
+                        intent.putExtra("y", y1);
                         intent.putExtra("keyLampada", keyLampada);
                         intent.putExtra("keyPlanimetria", keyPlanimetria);
                         startActivity(intent);
@@ -338,9 +340,6 @@ public class CensimentiInterni extends AppCompatActivity {
                     textView.setWidth(width1);
                     textView.setHeight(height1);
 //                    relativeLayout.addView(textView);
-
-
-
 
                 }
             }
