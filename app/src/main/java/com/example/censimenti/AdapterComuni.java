@@ -22,19 +22,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class AdapterComuni extends FirebaseRecyclerAdapter<Comune, AdapterComuni.comuniviewHolder> {
     private static DatabaseReference myRef;
     CardView cardView;
     ImageView puntini;
     Context context;
 
-    private List<String> lista = new ArrayList<String>();
-    private String key = null;
-    private int posizione = 0;
-    private Comune comune;
+
     public AdapterComuni(FirebaseRecyclerOptions<Comune> options) {
         super(options);
     }

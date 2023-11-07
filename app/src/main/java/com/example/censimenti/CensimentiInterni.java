@@ -9,6 +9,7 @@ import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.Icon;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.Gravity;
@@ -28,6 +29,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -40,6 +42,7 @@ public class CensimentiInterni extends AppCompatActivity {
 
     RelativeLayout relativeLayout;
     CircleImageView circleImageView;
+    FloatingActionButton indietroBtn;
     TextView textView;
     @SuppressLint("UseSwitchCompatOrMaterialCode")
     Switch switchBtn;
@@ -67,13 +70,15 @@ public class CensimentiInterni extends AppCompatActivity {
         relativeLayout = findViewById(R.id.relativeLayout);
         switchBtn = findViewById(R.id.switchBtn);
 
+        indietroBtn = findViewById(R.id.indietroBtn);
+
+
         lRef = FirebaseDatabase.getInstance().getReference("lampade");
 
         keyPlanimetria = getIntent().getStringExtra("key");
 
         imageUrl = getIntent().getStringExtra("imageUrl");
-//        Uri imageUri = Uri.parse(imageUrl);
-//        Drawable drawable = uriToDrawable (imageUri, getContentResolver());
+
         loadUrlAsDrawable(imageUrl, getApplicationContext(), new Icon.OnDrawableLoadedListener() {
             @Override
             public void onDrawableLoaded(Drawable d) {
@@ -81,12 +86,20 @@ public class CensimentiInterni extends AppCompatActivity {
 
             }
         });
+        indietroBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
 
        lref1 = lRef.child(keyPlanimetria);
        recuperaDati();
 
-        switchBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+
+       switchBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @SuppressLint("ClickableViewAccessibility")
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -100,6 +113,7 @@ public class CensimentiInterni extends AppCompatActivity {
                             intent.putExtra("y", y);
                             intent.putExtra("keyLampada", keyLampada);
                             intent.putExtra("keyPlanimetria", keyPlanimetria);
+                            Log.d ("messaggio", "apro da nuovo");
                             startActivity(intent);
                             return false;
                         }
@@ -120,7 +134,8 @@ public class CensimentiInterni extends AppCompatActivity {
                             child.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    handleImageClick((CircleImageView) v);
+                                    handleImageClick(v);
+
                                 }
                             });
 
@@ -129,16 +144,18 @@ public class CensimentiInterni extends AppCompatActivity {
                     relativeLayout.setOnTouchListener(null);
                 }
             }
-        });
+       });
 
     }
+
+
 
     @SuppressLint("ResourceAsColor")
     private void addNewCircle(MotionEvent event) {
 
         circleImageView = new CircleImageView(getApplicationContext());
 
-        float translate = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics());
+
 
         x = event.getX() - (larghezzaSchermo/80);
         y = event.getY() - (altezzaSchermo/128);
@@ -173,10 +190,11 @@ public class CensimentiInterni extends AppCompatActivity {
         keyLampada = lRef.push().getKey();
     }
 
-    private void handleImageClick(CircleImageView v) {
+    private void handleImageClick(View v) {
 
         Intent intent = new Intent(CensimentiInterni.this, AggiungiLampade.class);
-        lref1.addValueEventListener(new ValueEventListener() {
+
+        lref1.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
@@ -190,11 +208,14 @@ public class CensimentiInterni extends AppCompatActivity {
 
                     if (v.getX() == x1 && v.getY() == y1) {
                         keyLampada = dataSnapshot.getKey();
+
                         intent.putExtra("x", x1);
                         intent.putExtra("y", y1);
                         intent.putExtra("keyLampada", keyLampada);
                         intent.putExtra("keyPlanimetria", keyPlanimetria);
+                        Log.d("messaggio", "apro");
                         startActivity(intent);
+
                     }
                 }
             }
@@ -206,6 +227,7 @@ public class CensimentiInterni extends AppCompatActivity {
 
             }
         });
+
 
     }
 
@@ -235,6 +257,7 @@ public class CensimentiInterni extends AppCompatActivity {
                                 Intent intent = new Intent(CensimentiInterni.this, CensimentiInterni.class);
                                 intent.putExtra("key", keyPlanimetria);
                                 intent.putExtra("imageUrl", imageUrl);
+                                Log.d("messaggio", "apro da elimina");
                                 startActivity(intent);
                                 finish();
                             }

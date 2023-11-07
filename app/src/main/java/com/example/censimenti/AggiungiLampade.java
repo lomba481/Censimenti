@@ -118,7 +118,7 @@ public class AggiungiLampade extends AppCompatActivity {
                         .start();
             }
         });
-/*
+
         salva.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -158,22 +158,16 @@ public class AggiungiLampade extends AppCompatActivity {
                         //finish();
 
                     }
+                    finish();
                 } catch (FileNotFoundException e) {
                     throw new RuntimeException(e);
-                }                        Intent intent = new Intent(AggiungiLampade.this, CensimentiInterni.class);
-                startActivity(intent);
+                }
             }
         });
 
-     */
 
-        salva.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
 
-            }
-        });
+
 
         indietro.setOnClickListener(new View.OnClickListener() {
             @Override
