@@ -88,29 +88,25 @@ public class AdapterPlanimetrie extends FirebaseRecyclerAdapter<Planimetria, Ada
         cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//
-//                itemRefImage.addValueEventListener(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                        imageUrl = snapshot.getValue(String.class);
-//
-//                        Intent intent = new Intent(context.getApplicationContext(), CensimentiInterni.class);
-//                        intent.putExtra("imageUrl", imageUrl);
-//                        intent.putExtra("key", chiave);
-//                        context.startActivity(intent);
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError error) {
-//
-//                    }
+                DatabaseReference itemRefImage = itemRef.child("imageUrl");
 
-//                });
+                itemRefImage.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        imageUrl = snapshot.getValue(String.class);
 
-                Intent intent = new Intent(context.getApplicationContext(), CensimentiInterni.class);
-                intent.putExtra("key", chiave);
+                        Intent intent = new Intent(context.getApplicationContext(), CensimentiInterni.class);
+                        intent.putExtra("imageUrl", imageUrl);
+                        intent.putExtra("key", chiave);
+                        context.startActivity(intent);
+                    }
 
-                context.startActivity(intent);
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+
             }
         });
     }
