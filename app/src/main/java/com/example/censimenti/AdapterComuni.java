@@ -19,11 +19,10 @@ import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 public class AdapterComuni extends FirebaseRecyclerAdapter<Comune, AdapterComuni.comuniviewHolder> {
-    private static DatabaseReference myRef;
+    static DatabaseReference refComuni;
     CardView cardView;
     ImageView puntini;
     Context context;
@@ -46,7 +45,7 @@ public class AdapterComuni extends FirebaseRecyclerAdapter<Comune, AdapterComuni
         holder.nome.setText(model.getNome());
         holder.nCommessa.setText(model.getnCommessa());
 
-        myRef = FirebaseDatabase.getInstance().getReference("comune");
+//        refComuni = FirebaseDatabase.getInstance().getReference("comune");
         DatabaseReference itemRef = getRef(holder.getAbsoluteAdapterPosition());
         String chiave = itemRef.getKey();
 
@@ -60,17 +59,14 @@ public class AdapterComuni extends FirebaseRecyclerAdapter<Comune, AdapterComuni
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
-                        myRef.addValueEventListener(new ValueEventListener() {
+                        refComuni.addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                                     String chiave1 = dataSnapshot.getKey();
                                     if (chiave == chiave1) {
-                                        String nome = dataSnapshot.child("nome").getValue(String.class);
-                                        String numCommessa = dataSnapshot.child("numCommessa").getValue(String.class);
                                         Intent intent = new Intent(context.getApplicationContext(), AggiungiComune.class);
-                                        intent.putExtra("nome", nome);
-                                        intent.putExtra("numCommessa", numCommessa);
+                                        intent.putExtra("key", chiave);
                                         context.startActivity(intent);
                                     }
                                 }

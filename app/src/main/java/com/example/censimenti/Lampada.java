@@ -1,19 +1,18 @@
 package com.example.censimenti;
 
 public class Lampada {
-    String tipo, sorgente, potenza, attacco, foto, key;
+    String tipo, sorgente, potenza, attacco, foto;
     float x, y, Kx, Ky;
 
     public Lampada() {
     }
 
-    public Lampada(String tipo, String sorgente, String potenza, String attacco, String foto, String key, float x, float y, float Kx, float Ky) {
+    public Lampada(String tipo, String sorgente, String potenza, String attacco, String foto, float x, float y, float Kx, float Ky) {
         this.tipo = tipo;
         this.sorgente = sorgente;
         this.potenza = potenza;
         this.attacco = attacco;
         this.foto = foto;
-        this.key = key;
         this.x = x;
         this.y = y;
         this.Kx = Kx;
@@ -74,14 +73,6 @@ public class Lampada {
 
     public void setFoto(String foto) {
         this.foto = foto;
-    }
-
-    public String getKey() {
-        return key;
-    }
-
-    public void setKey(String key) {
-        this.key = key;
     }
 
     public float getX() {

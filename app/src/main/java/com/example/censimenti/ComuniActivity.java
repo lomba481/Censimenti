@@ -1,8 +1,9 @@
 package com.example.censimenti;
 
+import static com.example.censimenti.AdapterComuni.refComuni;
+
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.censimenti.Utenti.UtentiActivity;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class ComuniActivity extends AppCompatActivity {
@@ -24,7 +24,7 @@ public class ComuniActivity extends AppCompatActivity {
     FloatingActionButton addButton, gestioneUtenti;
     String key;
 
-    static DatabaseReference ref;
+//    static DatabaseReference ref;
 
 
     @Override
@@ -32,8 +32,9 @@ public class ComuniActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ref = FirebaseDatabase.getInstance().getReference("comune");
-        Log.d("seba", "" + ref);
+//        ref = FirebaseDatabase.getInstance().getReference("comune");
+        refComuni = FirebaseDatabase.getInstance().getReference("Comuni");
+
 
         recyclerView = findViewById(R.id.comuneRecycler);
 
@@ -42,7 +43,7 @@ public class ComuniActivity extends AppCompatActivity {
 
         FirebaseRecyclerOptions<Comune> options
                 = new FirebaseRecyclerOptions.Builder<Comune>()
-                .setQuery(ref, Comune.class)
+                .setQuery(refComuni, Comune.class)
                 .build();
         adapterComuni = new AdapterComuni(options);
         recyclerView.setAdapter(adapterComuni);
@@ -55,10 +56,7 @@ public class ComuniActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 //                Salvo la key del nuovo comune appena clicco sul "+"
-                String key = ref.push().getKey();
-//                Creo nuovo oggetto Comune
-
-//                Lo inserisco nel database
+                String key = refComuni.push().getKey();
 
 //                Passo all'activity in cui posso personalizzare il comune che voglio aggiungere
                 Intent intent = new Intent(ComuniActivity.this, AggiungiComune.class);

@@ -1,14 +1,12 @@
 package com.example.censimenti;
 
-import static com.example.censimenti.CensimentiInterni.lRef;
-import static com.example.censimenti.CensimentiInterni.lref1;
+import static com.example.censimenti.CensimentiInterni.refLampade;
 
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
@@ -67,10 +65,10 @@ public class AggiungiLampade extends AppCompatActivity {
         modelloLampada = findViewById(R.id.modelloLampada);
         potenzaLampada = findViewById(R.id.potenzaLampada);
         attaccoLampada = findViewById(R.id.attaccoLampada);
-        keyPlanimetria = getIntent().getStringExtra("keyPlanimetria");
+//        keyPlanimetria = getIntent().getStringExtra("keyPlanimetria");
         keyLampada = getIntent().getStringExtra("keyLampada");
 
-        Log.d("dada", keyPlanimetria + " -- " + keyLampada);
+
         x = getIntent().getFloatExtra("x", 0);
         y = getIntent().getFloatExtra("y", 0);
 
@@ -87,7 +85,7 @@ public class AggiungiLampade extends AppCompatActivity {
         autoCompleteMenu(opzioniTipoLampada, sorgenteLampada);
         autoCompleteMenu(opzioniTipoApparecchio, modelloLampada);
 
-        DatabaseReference lref2 = lref1.child(keyLampada);
+        DatabaseReference lref2 = refLampade.child(keyLampada);
         lref2.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -131,13 +129,12 @@ public class AggiungiLampade extends AppCompatActivity {
                         potenzaLampada.getText().toString(),
                         attaccoLampada.getText().toString(),
                         null,
-                        keyPlanimetria,
                         x, y, Kx, Ky);
                 try {
                     if (uri == null) {
                         lampada.setFoto("");
-                        lRef.child(keyPlanimetria).child(keyLampada).setValue(lampada);
-                        lRef.addValueEventListener(new ValueEventListener() {
+                        refLampade.child(keyLampada).setValue(lampada);
+                        refLampade.addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 Toast.makeText(AggiungiLampade.this, "dati aggiunti", Toast.LENGTH_SHORT).show();
@@ -201,13 +198,13 @@ public class AggiungiLampade extends AppCompatActivity {
                 taskSnapshot.getMetadata().getReference().getDownloadUrl().addOnSuccessListener(downloadUri -> {
                     String imageUrl = downloadUri.toString();
                     lampada.setFoto(imageUrl);
-                    lRef.child(keyPlanimetria).child(keyLampada).setValue(lampada);
+                    refLampade.child(keyLampada).setValue(lampada);
                 });
             }
 
         });
 
-        lRef.addValueEventListener(new ValueEventListener() {
+        refLampade.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 Toast.makeText(AggiungiLampade.this, "dati aggiunti", Toast.LENGTH_SHORT).show();

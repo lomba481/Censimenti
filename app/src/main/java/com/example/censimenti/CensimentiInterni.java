@@ -1,5 +1,7 @@
 package com.example.censimenti;
 
+import static com.example.censimenti.AdapterPlanimetrie.refPlanimetrie;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -33,7 +35,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -47,7 +48,7 @@ public class CensimentiInterni extends AppCompatActivity {
     @SuppressLint("UseSwitchCompatOrMaterialCode")
     Switch switchBtn;
 
-    static DatabaseReference lRef, lref1;
+    static DatabaseReference refLampade, lref1;
 
     String keyPlanimetria, keyLampada;
     String imageUrl;
@@ -72,12 +73,11 @@ public class CensimentiInterni extends AppCompatActivity {
 
         indietroBtn = findViewById(R.id.indietroBtn);
 
-
-        lRef = FirebaseDatabase.getInstance().getReference("lampade");
-
         keyPlanimetria = getIntent().getStringExtra("key");
 
         imageUrl = getIntent().getStringExtra("imageUrl");
+
+        refLampade = refPlanimetrie.child(keyPlanimetria).child("Lampade");
 
         loadUrlAsDrawable(imageUrl, getApplicationContext(), new Icon.OnDrawableLoadedListener() {
             @Override
@@ -94,7 +94,7 @@ public class CensimentiInterni extends AppCompatActivity {
         });
 
 
-       lref1 = lRef.child(keyPlanimetria);
+//       lref1 = lRef.child(keyPlanimetria);
        recuperaDati();
 
 
@@ -112,7 +112,7 @@ public class CensimentiInterni extends AppCompatActivity {
                             intent.putExtra("x", x);
                             intent.putExtra("y", y);
                             intent.putExtra("keyLampada", keyLampada);
-                            intent.putExtra("keyPlanimetria", keyPlanimetria);
+//                            intent.putExtra("keyPlanimetria", keyPlanimetria);
                             Log.d ("messaggio", "apro da nuovo");
                             startActivity(intent);
                             return false;
@@ -187,14 +187,14 @@ public class CensimentiInterni extends AppCompatActivity {
         textView.setWidth(width1);
         textView.setHeight(height1);
 
-        keyLampada = lRef.push().getKey();
+        keyLampada = refLampade.push().getKey();
     }
 
     private void handleImageClick(View v) {
 
         Intent intent = new Intent(CensimentiInterni.this, AggiungiLampade.class);
 
-        lref1.addListenerForSingleValueEvent(new ValueEventListener() {
+        refLampade.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
@@ -212,7 +212,7 @@ public class CensimentiInterni extends AppCompatActivity {
                         intent.putExtra("x", x1);
                         intent.putExtra("y", y1);
                         intent.putExtra("keyLampada", keyLampada);
-                        intent.putExtra("keyPlanimetria", keyPlanimetria);
+//                        intent.putExtra("keyPlanimetria", keyPlanimetria);
                         Log.d("messaggio", "apro");
                         startActivity(intent);
 
@@ -233,7 +233,7 @@ public class CensimentiInterni extends AppCompatActivity {
 
     private void handleImageLongClick(CircleImageView v) {
 
-        lref1.addValueEventListener(new ValueEventListener() {
+        refLampade.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
@@ -252,7 +252,7 @@ public class CensimentiInterni extends AppCompatActivity {
                         builder.setPositiveButton("Si", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                lRef.child(keyPlanimetria).child(keyLampada).removeValue();
+                                refLampade.child(keyLampada).removeValue();
                                 relativeLayout.removeView(v);
                                 Intent intent = new Intent(CensimentiInterni.this, CensimentiInterni.class);
                                 intent.putExtra("key", keyPlanimetria);
@@ -305,7 +305,7 @@ public class CensimentiInterni extends AppCompatActivity {
     private void recuperaDati() {
 
 
-        lref1.addValueEventListener(new ValueEventListener() {
+        refLampade.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {

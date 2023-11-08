@@ -1,5 +1,8 @@
 package com.example.censimenti;
 
+import static com.example.censimenti.AdapterComuni.refComuni;
+import static com.example.censimenti.AdapterEdifici.refEdifici;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -11,17 +14,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 
 public class EdificiActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private AdapterEdifici adapterEdifici;
     FloatingActionButton addButton;
-    String keyCommessa, keyEdificio ;
-    static DatabaseReference eRef;
-    static DatabaseReference myeRef;
+    String keyCommessa, keyEdificio;
+//    static DatabaseReference eRef;
+
 
 
     @Override
@@ -31,16 +31,17 @@ public class EdificiActivity extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.edificiRecycler);
         keyCommessa = getIntent().getStringExtra("key");
-        eRef = FirebaseDatabase.getInstance().getReference("edificio");
+        refEdifici = refComuni.child(keyCommessa).child("Edifici");
+//        eRef = FirebaseDatabase.getInstance().getReference("edificio");
 
-         Query query = eRef.child(keyCommessa).orderByChild("key").equalTo(keyCommessa);
+//         Query query = eRef.child(keyCommessa).orderByChild("key").equalTo(keyCommessa);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setItemAnimator(null);
 
         FirebaseRecyclerOptions<Edificio> options
                 = new FirebaseRecyclerOptions.Builder<Edificio>()
-                .setQuery(query, Edificio.class)
+                .setQuery(refEdifici, Edificio.class)
                 .build();
 
 
@@ -54,8 +55,8 @@ public class EdificiActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(EdificiActivity.this, AggiungiEdificio.class);
 
-                keyEdificio = eRef.push().getKey();
-                intent.putExtra("keyCommessa", keyCommessa);
+                keyEdificio = refEdifici.push().getKey();
+//                intent.putExtra("keyCommessa", keyCommessa);
                 intent.putExtra("keyEdificio", keyEdificio);
                 startActivity(intent);
             }

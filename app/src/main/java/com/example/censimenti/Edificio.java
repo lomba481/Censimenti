@@ -1,17 +1,11 @@
 package com.example.censimenti;
 
 public class Edificio {
-    String nome, indirizzo, key;
+    String nome, indirizzo;
 
     public Edificio(){}
 
-    public void setKey(String key) {
-        this.key = key;
-    }
 
-    public String getKey() {
-        return key;
-    }
 
     public void setNome(String nome) {
         this.nome = nome;
@@ -29,9 +23,9 @@ public class Edificio {
         return indirizzo;
     }
 
-    public Edificio(String nome, String indirizzo, String key) {
+    public Edificio(String nome, String indirizzo) {
         this.nome = nome;
         this.indirizzo = indirizzo;
-        this.key = key;
+
     }
 }

@@ -1,6 +1,6 @@
 package com.example.censimenti;
 
-import static com.example.censimenti.ComuniActivity.ref;
+import static com.example.censimenti.AdapterComuni.refComuni;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -47,6 +47,24 @@ public class AggiungiComune extends AppCompatActivity {
         key = getIntent().getStringExtra("key");
         salva = findViewById(R.id.saveBtn);
         indietro = findViewById(R.id.backBtn);
+
+        DatabaseReference cRef = refComuni.child(key);
+        cRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    String nome = snapshot.child("nome").getValue(String.class);
+                    String num = snapshot.child("nCommessa").getValue(String.class);
+                    nomeComune.setText(nome);
+                    nCommessa.setText(num);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
 
         //String[] utentiArray = {"utente1", "utente2", "utente3", "utente4", "utente5"};
@@ -130,14 +148,14 @@ public class AggiungiComune extends AppCompatActivity {
                 String [] strings = testo.split(", ");
                 List<String>stringList = new ArrayList<>(Arrays.asList(strings));
 
-                ref.child(key).setValue(comune);
+                refComuni.child(key).setValue(comune);
                 for (int i=0;i<stringList.size();i++){
-                    ref.child(key).child("utenti").push().setValue(stringList.get(i));
+                    refComuni.child(key).child("utenti").push().setValue(stringList.get(i));
                 }
 
 
 
-                ref.addValueEventListener(new ValueEventListener() {
+                refComuni.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         Toast.makeText(AggiungiComune.this, "dati aggiunti", Toast.LENGTH_SHORT).show();

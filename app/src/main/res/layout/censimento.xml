@@ -17,10 +17,11 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
             android:layout_marginTop="15dp"
-            app:backgroundTint="@color/blue_restart"
-            app:tint="@color/white"
-            android:src="@drawable/baseline_arrow_forward_24"
             android:rotationY="180"
+            android:src="@drawable/baseline_arrow_forward_24"
+            app:backgroundTint="@color/blue_restart"
+            app:maxImageSize="30dp"
+            app:tint="@color/white"
             tools:ignore="SpeakableTextPresentCheck">
 
         </com.google.android.material.floatingactionbutton.FloatingActionButton>
@@ -37,6 +38,21 @@
             android:trackTint="@color/blue_restart"
             app:layout_constraintEnd_toEndOf="parent"
             tools:ignore="MissingConstraints,UseSwitchCompatOrMaterialXml" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/esportaBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="15dp"
+            android:layout_marginBottom="15dp"
+            android:src="@drawable/outline_download_for_offline_24"
+            app:backgroundTint="@color/blue_restart"
+            app:maxImageSize="30dp"
+            app:tint="@color/white"
+            tools:ignore="SpeakableTextPresentCheck"/>
+
 
     </RelativeLayout>
 

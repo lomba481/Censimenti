@@ -1,6 +1,6 @@
 package com.example.censimenti;
 
-import static com.example.censimenti.EdificiActivity.eRef;
+import static com.example.censimenti.AdapterEdifici.refEdifici;
 
 import android.os.Bundle;
 import android.view.View;
@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
 public class AggiungiEdificio extends AppCompatActivity {
@@ -30,11 +31,28 @@ public class AggiungiEdificio extends AppCompatActivity {
         nomeEdificio = findViewById(R.id.nomeEdificio);
         indirizzoEdificio = findViewById(R.id.indirizzo);
 
-        keyCommessa = getIntent().getStringExtra("keyCommessa");
         keyEdificio = getIntent().getStringExtra("keyEdificio");
 
         salva = findViewById(R.id.saveBtn);
         indietro = findViewById(R.id.backBtn);
+
+        DatabaseReference eRef = refEdifici.child(keyEdificio);
+        eRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    String nome = snapshot.child("nome").getValue(String.class);
+                    String indirizzo = snapshot.child("indirizzo").getValue(String.class);
+                    nomeEdificio.setText(nome);
+                    indirizzoEdificio.setText(indirizzo);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
         salva.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -44,10 +62,9 @@ public class AggiungiEdificio extends AppCompatActivity {
                 Edificio edificio = new Edificio();
                 edificio.setNome(nome);
                 edificio.setIndirizzo(indirizzo);
-                edificio.setKey(keyCommessa);
-                eRef.child(keyCommessa).child(keyEdificio).setValue(edificio);
+                refEdifici.child(keyEdificio).setValue(edificio);
 
-                eRef.addValueEventListener(new ValueEventListener() {
+                refEdifici.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         Toast.makeText(AggiungiEdificio.this, "dati aggiunti", Toast.LENGTH_SHORT).show();

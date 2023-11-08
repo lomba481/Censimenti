@@ -1,6 +1,6 @@
 package com.example.censimenti;
 
-import static com.example.censimenti.PlanimetrieActivity.pRef;
+import static com.example.censimenti.AdapterPlanimetrie.refPlanimetrie;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -20,6 +20,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -42,13 +43,29 @@ public class AggiungiPlanimetria extends AppCompatActivity {
         setContentView(R.layout.aggiungi_planimetria);
         nomePlanimetria = findViewById(R.id.nomePlanimetria);
 
-        keyEdificio = getIntent().getStringExtra("keyEdificio");
         keyPlanimetria = getIntent().getStringExtra("keyPlanimetria");
 
         salva = findViewById(R.id.saveBtn);
         indietro = findViewById(R.id.backBtn);
         scegliImmagine = findViewById(R.id.ScegliImmagine);
         imageView = findViewById(R.id.ImageView);
+
+        DatabaseReference pRef = refPlanimetrie.child(keyPlanimetria);
+        pRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    String nome = snapshot.child("nome").getValue(String.class);
+                    String url = snapshot.child("imageUrl").getValue(String.class);
+                    nomePlanimetria.setText(nome);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
         scegliImmagine.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,9 +82,9 @@ public class AggiungiPlanimetria extends AppCompatActivity {
                 String nome = nomePlanimetria.getText().toString();
                 Planimetria planimetria = new Planimetria();
                 planimetria.setNome(nome);
-                planimetria.setKey(keyEdificio);
                 try {
                     addDataFirebase(planimetria);
+                    finish();
                 } catch (FileNotFoundException e) {
                     throw new RuntimeException(e);
                 }
@@ -106,14 +123,15 @@ public class AggiungiPlanimetria extends AppCompatActivity {
                 taskSnapshot.getMetadata().getReference().getDownloadUrl().addOnSuccessListener(downloadUri -> {
                     String imageUrl = downloadUri.toString();
                     planimetria.setImageUrl(imageUrl);
-                    pRef.child(keyEdificio).child(keyPlanimetria).setValue(planimetria);
+                    refPlanimetrie.child(keyPlanimetria).setValue(planimetria);
                 });
             }
         });
-        pRef.addValueEventListener(new ValueEventListener() {
+        refPlanimetrie.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 Toast.makeText(AggiungiPlanimetria.this, "dati aggiunti", Toast.LENGTH_SHORT).show();
+
             }
 
             @Override
