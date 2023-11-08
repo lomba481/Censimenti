@@ -97,11 +97,9 @@ public class AdapterComuni extends FirebaseRecyclerAdapter<Comune, AdapterComuni
             @Override
             public void onClick(View v) {
 //                Copiato da Seba
-
                 Intent intent = new Intent(context.getApplicationContext(), EdificiActivity.class);
                 intent.putExtra("key", chiave);
                 context.startActivity(intent);
-
             }
         });
 

@@ -4,8 +4,10 @@ import static com.example.censimenti.AdapterComuni.refComuni;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -14,7 +16,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.censimenti.Utenti.UtentiActivity;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ComuniActivity extends AppCompatActivity {
 
@@ -23,6 +33,8 @@ public class ComuniActivity extends AppCompatActivity {
     private AdapterComuni adapterComuni;
     FloatingActionButton addButton, gestioneUtenti;
     String key;
+
+    String nomeCognome;
 
 //    static DatabaseReference ref;
 
@@ -33,13 +45,15 @@ public class ComuniActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 //        ref = FirebaseDatabase.getInstance().getReference("comune");
+
+        nomeCognome = getIntent().getStringExtra("nomeCognome");
+
         refComuni = FirebaseDatabase.getInstance().getReference("Comuni");
-
-
         recyclerView = findViewById(R.id.comuneRecycler);
-
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setItemAnimator(null);
+
+        //Query query = refComuni.orderByChild("utenti/" + nomeCognome).equalTo(true);
 
         FirebaseRecyclerOptions<Comune> options
                 = new FirebaseRecyclerOptions.Builder<Comune>()
@@ -47,6 +61,7 @@ public class ComuniActivity extends AppCompatActivity {
                 .build();
         adapterComuni = new AdapterComuni(options);
         recyclerView.setAdapter(adapterComuni);
+
 
         addButton = findViewById(R.id.addingBtn);
         gestioneUtenti = findViewById(R.id.gestisciUtenti);
@@ -64,7 +79,6 @@ public class ComuniActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
 
         gestioneUtenti.setOnClickListener(new View.OnClickListener() {
             @Override

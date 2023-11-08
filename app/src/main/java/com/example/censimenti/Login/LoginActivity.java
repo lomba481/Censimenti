@@ -26,7 +26,6 @@ public class LoginActivity extends AppCompatActivity {
 
     TextInputEditText utenteMail, utentePassword;
     Button login, registrati;
-
     LinearLayout layout;
 
 
@@ -41,29 +40,37 @@ public class LoginActivity extends AppCompatActivity {
         utentePassword = findViewById(R.id.utentePass);
         login = findViewById(R.id.loginBtn);
         registrati = findViewById(R.id.addUtenteBtn);
-
+        DatabaseReference refUtente = FirebaseDatabase.getInstance().getReference("utenti");
 
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DatabaseReference refUtente = FirebaseDatabase.getInstance().getReference("utenti");
+
+                String mail = utenteMail.getText().toString();
+                String password = utentePassword.getText().toString();
+                Log.d("nomepass", mail + password);
+
                 refUtente.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
 
-                            if (dataSnapshot.child("mail").getValue().equals(utenteMail.getText().toString()) &&
-                                    dataSnapshot.child("password").getValue().equals(utentePassword.getText().toString())) {
+                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                            if (dataSnapshot.child("mail").getValue(String.class).equals(mail) &&
+                                    dataSnapshot.child("password").getValue(String.class).equals(password)) {
+                                String nome = dataSnapshot.child("nome").getValue(String.class);
+                                String cognome = dataSnapshot.child("cognome").getValue(String.class);
                                 //passo all'activiti comuni
                                 Intent intent = new Intent(LoginActivity.this, ComuniActivity.class);
+                                intent.putExtra("nomeCognome", nome + " " + cognome);
                                 startActivity(intent);
-
+                                break;
 
                             } else {
                                 //messaggio nome utente o password non corretti
                                 Toast.makeText(getApplicationContext(), "Nome utente o Password non corretti", Toast.LENGTH_SHORT).show();
                                 utenteMail.setText("");
                                 utentePassword.setText("");
+
                             }
 
 
@@ -75,8 +82,6 @@ public class LoginActivity extends AppCompatActivity {
 
                     }
                 });
-                Log.d("sdasd", " fdsfs");
-
             }
         });
 
