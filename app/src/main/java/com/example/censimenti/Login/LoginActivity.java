@@ -59,6 +59,7 @@ public class LoginActivity extends AppCompatActivity {
                                     dataSnapshot.child("password").getValue(String.class).equals(password)) {
                                 String nome = dataSnapshot.child("nome").getValue(String.class);
                                 String cognome = dataSnapshot.child("cognome").getValue(String.class);
+//                                String mail = dataSnapshot.child("mail").getValue(String.class);
                                 //passo all'activiti comuni
                                 Intent intent = new Intent(LoginActivity.this, ComuniActivity.class);
                                 intent.putExtra("nomeCognome", nome + " " + cognome);
