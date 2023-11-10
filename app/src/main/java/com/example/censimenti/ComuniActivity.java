@@ -15,7 +15,6 @@ import com.example.censimenti.Utenti.UtentiActivity;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 
 public class ComuniActivity extends AppCompatActivity {
 
@@ -45,13 +44,13 @@ public class ComuniActivity extends AppCompatActivity {
         recyclerView.setItemAnimator(null);
 
         // qui ci va messa la query
-        Query query = refComuni;
+//        Query query = refComuni;
 
 
 
         FirebaseRecyclerOptions<Comune> options
                 = new FirebaseRecyclerOptions.Builder<Comune>()
-                .setQuery(query, Comune.class)
+                .setQuery(refComuni, Comune.class)
                 .build();
         adapterComuni = new AdapterComuni(options);
         recyclerView.setAdapter(adapterComuni);
