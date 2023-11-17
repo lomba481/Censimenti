@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -21,14 +22,14 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
-public class AdapterComuni extends FirebaseRecyclerAdapter<Comune, AdapterComuni.comuniviewHolder> {
+public class AdapterComuni extends FirebaseRecyclerAdapter<AggiungiComune.Comune, AdapterComuni.comuniviewHolder> {
     static DatabaseReference refComuni;
     CardView cardView;
     ImageView puntini;
     Context context;
 
 
-    public AdapterComuni(FirebaseRecyclerOptions<Comune> options) {
+    public AdapterComuni(FirebaseRecyclerOptions<AggiungiComune.Comune> options) {
         super(options);
     }
 
@@ -41,7 +42,7 @@ public class AdapterComuni extends FirebaseRecyclerAdapter<Comune, AdapterComuni
     }
 
     @Override
-    protected void onBindViewHolder(@NonNull comuniviewHolder holder, int position, @NonNull Comune model) {
+    protected void onBindViewHolder(@NonNull comuniviewHolder holder, int position, @NonNull AggiungiComune.Comune model) {
         holder.nome.setText(model.getNome());
         holder.nCommessa.setText(model.getnCommessa());
 
@@ -85,6 +86,24 @@ public class AdapterComuni extends FirebaseRecyclerAdapter<Comune, AdapterComuni
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         itemRef.removeValue();
+                        refComuni.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                Toast.makeText(context.getApplicationContext(), "Eliminato con successo", Toast.LENGTH_SHORT).show();
+//                                LayoutInflater inflater = LayoutInflater.from(context.getApplicationContext());
+//                                View layout = inflater.inflate(R.layout.custom_toast, null);
+//                                Toast toast = new Toast(context.getApplicationContext());
+//                                toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+//                                toast.setView(layout);
+//                                toast.show();
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+
                     }
                 });
                 AlertDialog dialog = builder.create();
@@ -118,4 +137,6 @@ public class AdapterComuni extends FirebaseRecyclerAdapter<Comune, AdapterComuni
 
         }
     }
+
+
 }

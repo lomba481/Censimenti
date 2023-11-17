@@ -2,6 +2,7 @@ package com.example.censimenti;
 
 import static com.example.censimenti.AdapterComuni.refComuni;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -19,6 +20,7 @@ import com.google.firebase.database.FirebaseDatabase;
 public class ComuniActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
+
     Toolbar toolbar;
     private AdapterComuni adapterComuni;
     FloatingActionButton addButton, gestioneUtenti;
@@ -29,6 +31,7 @@ public class ComuniActivity extends AppCompatActivity {
 //    static DatabaseReference ref;
 
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,9 +51,9 @@ public class ComuniActivity extends AppCompatActivity {
 
 
 
-        FirebaseRecyclerOptions<Comune> options
-                = new FirebaseRecyclerOptions.Builder<Comune>()
-                .setQuery(refComuni, Comune.class)
+        FirebaseRecyclerOptions<AggiungiComune.Comune> options
+                = new FirebaseRecyclerOptions.Builder<AggiungiComune.Comune>()
+                .setQuery(refComuni, AggiungiComune.Comune.class)
                 .build();
         adapterComuni = new AdapterComuni(options);
         recyclerView.setAdapter(adapterComuni);
@@ -83,7 +86,12 @@ public class ComuniActivity extends AppCompatActivity {
         });
 
 
+
+
+
+
     }
+
 
     @Override
     protected void onStart() {

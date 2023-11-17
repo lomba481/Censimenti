@@ -1,22 +1,49 @@
 package com.example.censimenti;
 
 public class Lampada {
-    String tipo, sorgente, potenza, attacco, foto;
+    String locale, tipo, nome, potenza, sorgente, attacco, installazione, foto;
     float x, y, Kx, Ky;
 
     public Lampada() {
     }
 
-    public Lampada(String tipo, String sorgente, String potenza, String attacco, String foto, float x, float y, float Kx, float Ky) {
+    public Lampada(String locale, String tipo, String nome, String potenza, String sorgente, String attacco, String installazione, String foto, float x, float y, float kx, float ky) {
+        this.locale = locale;
         this.tipo = tipo;
-        this.sorgente = sorgente;
+        this.nome = nome;
         this.potenza = potenza;
+        this.sorgente = sorgente;
         this.attacco = attacco;
+        this.installazione = installazione;
         this.foto = foto;
         this.x = x;
         this.y = y;
-        this.Kx = Kx;
-        this.Ky = Ky;
+        Kx = kx;
+        Ky = ky;
+    }
+
+    public String getLocale() {
+        return locale;
+    }
+
+    public void setLocale(String locale) {
+        this.locale = locale;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public void setInstallazione(String installazione) {
+        this.installazione = installazione;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public String getInstallazione() {
+        return installazione;
     }
 
     public void setKx(float kx) {

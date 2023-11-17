@@ -28,20 +28,56 @@
 
         <Switch
             android:id="@+id/switchBtn"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
             android:layout_alignParentEnd="true"
             android:layout_marginTop="15dp"
             android:layout_marginEnd="10dp"
             android:checked="false"
-            android:thumbTint="@color/orange_restart"
-            android:trackTint="@color/blue_restart"
+            android:padding="2dp"
+            android:thumb="@drawable/baseline_brightness_1_24"
+            android:track="@drawable/track_switch"
             app:layout_constraintEnd_toEndOf="parent"
             tools:ignore="MissingConstraints,UseSwitchCompatOrMaterialXml" />
 
 
+        <com.getbase.floatingactionbutton.FloatingActionsMenu
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="5dp"
+            app:fab_labelStyle="@color/white"
+            app:fab_addButtonColorNormal="@color/orange_restart"
+            app:fab_addButtonColorPressed="@color/white">
+
+            <com.getbase.floatingactionbutton.FloatingActionButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:fab_colorDisabled="@android:color/darker_gray"
+                app:fab_colorNormal="@color/orange_restart"
+                app:fab_colorPressed="@color/white"
+                app:fab_icon="@drawable/baseline_light_24"
+                app:fab_size="mini"
+                app:fab_title="Lampada" />
+
+            <com.getbase.floatingactionbutton.FloatingActionButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:fab_colorDisabled="@android:color/darker_gray"
+                app:fab_colorNormal="@color/orange_restart"
+                app:fab_colorPressed="@color/white"
+                app:fab_icon="@drawable/baseline_square_foot_24"
+                app:fab_size="mini"
+                app:fab_title="Locale" />
 
 
+        </com.getbase.floatingactionbutton.FloatingActionsMenu>
+
+        
     </RelativeLayout>
 
 

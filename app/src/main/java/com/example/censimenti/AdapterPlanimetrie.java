@@ -90,7 +90,7 @@ public class AdapterPlanimetrie extends FirebaseRecyclerAdapter<Planimetria, Ada
             public void onClick(View v) {
                 DatabaseReference itemRefImage = itemRef.child("imageUrl");
 
-                itemRefImage.addValueEventListener(new ValueEventListener() {
+                itemRefImage.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         imageUrl = snapshot.getValue(String.class);

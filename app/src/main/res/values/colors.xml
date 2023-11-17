@@ -4,4 +4,11 @@
     <color name="white">#FFFFFFFF</color>
     <color name="orange_restart">#EF7D00</color>
     <color name="blue_restart">#062033</color>
+    <color name="controsoffitto">#00BFFF</color>
+    <color name="esterna">#AAFFAA</color>
+    <color name="incasso">#7EBDAD</color>
+    <color name="led">#FFAAEA</color>
+    <color name="parete">#FF7F00</color>
+    <color name="soffitto">#7F00FF</color>
+    <color name="sospensione">#00811F</color>
 </resources>

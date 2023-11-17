@@ -4,9 +4,9 @@ import static com.example.censimenti.AdapterComuni.refComuni;
 import static com.example.censimenti.AdapterEdifici.refEdifici;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.storage.StorageManager;
+import android.os.storage.StorageVolume;
 import android.view.View;
 import android.widget.Toast;
 
@@ -20,7 +20,6 @@ import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
 import org.apache.poi.ss.usermodel.Row;
@@ -28,6 +27,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -36,7 +36,7 @@ public class EdificiActivity extends AppCompatActivity {
     private AdapterEdifici adapterEdifici;
     FloatingActionButton addButton, esportaBtn;
     String keyCommessa, keyEdificio;
-//    static DatabaseReference eRef;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -81,11 +81,7 @@ public class EdificiActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-//                Intent intent = new Intent("android.settings.MANAGE_APP_ALL_FILES_ACCESS_PERMISSION");
-//                intent.setData(Uri.parse("package:" + getPackageName()));
-//                startActivity(intent);
-
-
+                Toast.makeText(getApplicationContext(), "Sto esportando in formato .xslx", Toast.LENGTH_LONG).show();
                 esportaDati();
             }
         });
@@ -94,6 +90,7 @@ public class EdificiActivity extends AppCompatActivity {
     }
 
     private void esportaDati() {
+
         try {
             Workbook workbook = new XSSFWorkbook();
             Sheet sheet = workbook.createSheet("Dati");
@@ -102,46 +99,75 @@ public class EdificiActivity extends AppCompatActivity {
             headerRow.createCell(0).setCellValue("Comune");
             headerRow.createCell(1).setCellValue("Edificio");
             headerRow.createCell(2).setCellValue("Piano");
-            headerRow.createCell(3).setCellValue("Lampada");
+            headerRow.createCell(3).setCellValue("Locale");
+            headerRow.createCell(4).setCellValue("Tipo");
+            headerRow.createCell(5).setCellValue("Nome");
+            headerRow.createCell(6).setCellValue("Potenza");
+            headerRow.createCell(7).setCellValue("Sorgente");
+            headerRow.createCell(8).setCellValue("Attacco");
+            headerRow.createCell(9).setCellValue("Installazione");
 
 
-//
-            DatabaseReference db = refComuni.child(keyCommessa);
-            db.addListenerForSingleValueEvent(new ValueEventListener() {
+
+            refComuni.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     for (DataSnapshot comuneSnapshot : snapshot.getChildren()) {
-                        String nomeComune = comuneSnapshot.child("nome").getValue(String.class);
+                        String chiave = comuneSnapshot.getKey();
 
-                        for (DataSnapshot edificioSnapshot : comuneSnapshot.child("Edifici").getChildren()) {
-                            String nomeEdificio = edificioSnapshot.child("name").getValue(String.class);
+                        if (chiave.equals(keyCommessa)) {
+                            String nomeComune = comuneSnapshot.child("nome").getValue(String.class);
 
-                            for (DataSnapshot planimetriaSnapshot : edificioSnapshot.child("Planimetrie").getChildren()) {
-                                String nomePlanimetria = planimetriaSnapshot.child("name").getValue(String.class);
+                            for (DataSnapshot edificioSnapshot : comuneSnapshot.child("Edifici").getChildren()) {
+                                String nomeEdificio = edificioSnapshot.child("nome").getValue(String.class);
 
-                                for (DataSnapshot lampadaSnapshot : planimetriaSnapshot.child("Lampade").getChildren()) {
-                                    String attacco = lampadaSnapshot.child("attacco").getValue(String.class);
+                                for (DataSnapshot planimetriaSnapshot : edificioSnapshot.child("Planimetrie").getChildren()) {
+                                    String nomePlanimetria = planimetriaSnapshot.child("nome").getValue(String.class);
 
-                                    Row row = sheet.createRow(sheet.getLastRowNum()+1);
-                                    row.createCell(0).setCellValue(nomeComune);
-                                    row.createCell(1).setCellValue(nomeEdificio);
-                                    row.createCell(2).setCellValue(nomePlanimetria);
-                                    row.createCell(3).setCellValue(attacco);
-                                    Log.d("fatto", "fffffff");
+                                    for (DataSnapshot lampadaSnapshot : planimetriaSnapshot.child("Lampade").getChildren()) {
+                                        String locale = lampadaSnapshot.child("locale").getValue(String.class);
+                                        String tipo = lampadaSnapshot.child("tipo").getValue(String.class);
+                                        String nome = lampadaSnapshot.child("nome").getValue(String.class);
+                                        String potenza = lampadaSnapshot.child("potenza").getValue(String.class);
+                                        String sorgente = lampadaSnapshot.child("sorgente").getValue(String.class);
+                                        String attacco = lampadaSnapshot.child("attacco").getValue(String.class);
+                                        String installazione = lampadaSnapshot.child("installazione").getValue(String.class);
+
+                                        Row row = sheet.createRow(sheet.getLastRowNum()+1);
+                                        row.createCell(0).setCellValue(nomeComune);
+                                        row.createCell(1).setCellValue(nomeEdificio);
+                                        row.createCell(2).setCellValue(nomePlanimetria);
+                                        row.createCell(3).setCellValue(locale);
+                                        row.createCell(4).setCellValue(tipo);
+                                        row.createCell(5).setCellValue(nome);
+                                        row.createCell(6).setCellValue(potenza);
+                                        row.createCell(7).setCellValue(sorgente);
+                                        row.createCell(8).setCellValue(attacco);
+                                        row.createCell(9).setCellValue(installazione);
+
+                                    }
                                 }
                             }
                         }
                     }
 
+                    StorageManager storageManager = (StorageManager) getSystemService(STORAGE_SERVICE);
+                    StorageVolume storageVolume = storageManager.getStorageVolumes().get(0);
+                    File file = null;
+
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+                        file = new File(storageVolume.getDirectory().getPath() + "/Download/DatiExcel.xlsx");
+                    }
+
                     try {
-                        FileOutputStream fileOutputStream = new FileOutputStream(getExternalFilesDir(null) + "Dati000.xlsx");
+                        FileOutputStream fileOutputStream = new FileOutputStream(file);
                         workbook.write(fileOutputStream);
-                        Toast.makeText(getApplicationContext(), "OK", Toast.LENGTH_SHORT).show();
                         fileOutputStream.close();
                         workbook.close();
+                        Toast.makeText(getApplicationContext(), "File Creato Con Successo", Toast.LENGTH_SHORT).show();
                     } catch (IOException e) {
                         e.printStackTrace();
-                        Toast.makeText(getApplicationContext(), "NO OK", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Creazione File Fallita", Toast.LENGTH_SHORT).show();
                     }
                 }
 
@@ -157,111 +183,6 @@ public class EdificiActivity extends AppCompatActivity {
     }
 
 
-//    private void esportaDati() {
-//        Workbook workbook = new HSSFWorkbook();
-//        Cell cell = null;
-//
-//        Sheet sheet = null;
-//        sheet = workbook.createSheet("nome");
-//
-//        Row row = sheet.createRow(0);
-//
-//        cell= row.createCell(0);
-//        cell.setCellValue("Nome");
-//
-//        cell= row.createCell(1);
-//        cell.setCellValue("Numero");
-//
-//        File file = new File(getExternalFilesDir(null), "Dati.xls");
-//        FileOutputStream outputStream = null;
-//
-//        try {
-//            outputStream = new FileOutputStream(file);
-//            workbook.write(outputStream);
-//            Toast.makeText(getApplicationContext(), "OK", Toast.LENGTH_SHORT).show();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            Toast.makeText(getApplicationContext(), "NO OK", Toast.LENGTH_SHORT).show();
-//            try {
-//                outputStream.close();
-//            } catch (IOException ex) {
-//                ex.printStackTrace();
-//            }
-//        }
-////        new ExportTask().execute();
-//
-//    }
-
-    private class ExportTask extends AsyncTask<Void, Void, Void> {
-        @Override
-        protected Void doInBackground(Void... voids) {
-            try {
-//                Workbook workbook = new XSSFWorkbook();
-//                Sheet sheet = workbook.createSheet("Dati");
-//
-//                Row headerRow = sheet.createRow(0);
-//                headerRow.createCell(0).setCellValue("Comune");
-//                headerRow.createCell(1).setCellValue("Edificio");
-//                headerRow.createCell(2).setCellValue("Piano");
-//                headerRow.createCell(3).setCellValue("Lampada");
-//
-//                try {
-//                            FileOutputStream fileOutputStream = new FileOutputStream(getExternalFilesDir(Environment.DIRECTORY_ALARMS) + "Dati.xlsx");
-//                            workbook.write(fileOutputStream);
-//                            fileOutputStream.close();
-//                            workbook.close();
-//                        } catch (IOException e) {
-//                            e.printStackTrace();
-//                            Log.d("dcdc", ""+ e);
-//                        }
-
-//                refComuni.child(keyCommessa).addListenerForSingleValueEvent(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                        for (DataSnapshot comuneSnapshot : snapshot.getChildren()) {
-//                            String nomeComune = comuneSnapshot.child("nome").getValue(String.class);
-//
-//                            for (DataSnapshot edificioSnapshot : comuneSnapshot.child("Edifici").getChildren()) {
-//                                String nomeEdificio = edificioSnapshot.child("name").getValue(String.class);
-//
-//                                for (DataSnapshot planimetriaSnapshot : edificioSnapshot.child("Planimetrie").getChildren()) {
-//                                    String nomePlanimetria = planimetriaSnapshot.child("name").getValue(String.class);
-//
-//                                    for (DataSnapshot lampadaSnapshot : planimetriaSnapshot.child("Lampade").getChildren()) {
-//                                        String attacco = lampadaSnapshot.child("attacco").getValue(String.class);
-//
-//                                        Row row = sheet.createRow(sheet.getLastRowNum() + 1);
-//                                        row.createCell(0).setCellValue(nomeComune);
-//                                        row.createCell(1).setCellValue(nomeEdificio);
-//                                        row.createCell(2).setCellValue(nomePlanimetria);
-//                                        row.createCell(3).setCellValue(attacco);
-//                                    }
-//                                }
-//                            }
-//                        }
-//
-//                        try {
-//                            FileOutputStream fileOutputStream = new FileOutputStream(getExternalFilesDir(null) + "/Dati.xlsx");
-//                            workbook.write(fileOutputStream);
-//                            fileOutputStream.close();
-//                            workbook.close();
-//                        } catch (IOException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError error) {
-//
-//                    }
-//                });
-            } catch (Exception e) {
-                e.printStackTrace();
-                Log.d("dcdc", "2222----" + e);
-            }
-            return null;
-        }
-    }
     @Override
     protected void onStart() {
         super.onStart();

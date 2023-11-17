@@ -49,7 +49,7 @@ public class AggiungiComune extends AppCompatActivity {
         indietro = findViewById(R.id.backBtn);
 
         DatabaseReference cRef = refComuni.child(key);
-        cRef.addValueEventListener(new ValueEventListener() {
+        cRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
@@ -155,7 +155,7 @@ public class AggiungiComune extends AppCompatActivity {
 
 
 
-                refComuni.addValueEventListener(new ValueEventListener() {
+                refComuni.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         Toast.makeText(AggiungiComune.this, "dati aggiunti", Toast.LENGTH_SHORT).show();
@@ -209,4 +209,31 @@ public class AggiungiComune extends AppCompatActivity {
         void onCallback(String[] data);
     }
 
+    public static class Comune {
+        String nome, nCommessa;
+
+    //    Costruttore vuoto per Firebase
+        public Comune() {}
+
+        public Comune(String nome, String nCommessa) {
+            this.nome = nome;
+            this.nCommessa = nCommessa;
+        }
+
+        public String getNome() {
+            return nome;
+        }
+
+        public String getnCommessa() {
+            return nCommessa;
+        }
+
+        public void setNome(String nome) {
+            this.nome = nome;
+        }
+
+        public void setnCommessa(String nCommessa) {
+            this.nCommessa = nCommessa;
+        }
+    }
 }

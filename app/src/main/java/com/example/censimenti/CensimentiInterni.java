@@ -6,6 +6,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
@@ -53,7 +54,7 @@ public class CensimentiInterni extends AppCompatActivity {
     String keyPlanimetria, keyLampada;
     String imageUrl;
     float x, y;
-    int larghezzaSchermo, altezzaSchermo;
+    int larghezzaSchermo, altezzaSchermo, orientation;
 
 
     @Override
@@ -65,8 +66,12 @@ public class CensimentiInterni extends AppCompatActivity {
         Point size = new Point();
         display.getSize(size);
 
+        orientation = this.getResources().getConfiguration().orientation;
+
         larghezzaSchermo = size.x;
         altezzaSchermo = size.y;
+
+        Log.d("schermo", "largh: " + larghezzaSchermo + " --- altez: " + altezzaSchermo);
 
         relativeLayout = findViewById(R.id.relativeLayout);
         switchBtn = findViewById(R.id.switchBtn);
@@ -155,20 +160,24 @@ public class CensimentiInterni extends AppCompatActivity {
 
         circleImageView = new CircleImageView(getApplicationContext());
 
+        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+            x = event.getX() - (larghezzaSchermo/80);
+            y = event.getY() - (altezzaSchermo/128);
+        } else {
+            x = event.getX() - (larghezzaSchermo/128);
+            y = event.getY() - (altezzaSchermo/80);
+        }
 
-
-        x = event.getX() - (larghezzaSchermo/80);
-        y = event.getY() - (altezzaSchermo/128);
 //        x = event.getX();
 //        y = event.getY();
 
-        circleImageView.setX(x);
-        circleImageView.setY(y);
+//        circleImageView.setX(x);
+//        circleImageView.setY(y);
 
-        int width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, getResources().getDisplayMetrics());
-        int height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, getResources().getDisplayMetrics());
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(larghezzaSchermo/40, altezzaSchermo/64);
-        circleImageView.setLayoutParams(params);
+//        int width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, getResources().getDisplayMetrics());
+//        int height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, getResources().getDisplayMetrics());
+//        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(larghezzaSchermo/40, altezzaSchermo/64);
+//        circleImageView.setLayoutParams(params);
 
 
 
@@ -284,6 +293,7 @@ public class CensimentiInterni extends AppCompatActivity {
 
 
 
+
     }
 
     public void loadUrlAsDrawable(String url, Context context, final Icon.OnDrawableLoadedListener listener) {
@@ -310,23 +320,39 @@ public class CensimentiInterni extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
 
-                    String sorgente = (String) (dataSnapshot.child("sorgente").getValue());
-//                    float xRaw = dataSnapshot.child("x").getValue(Float.class);
-//                    float yRaw = dataSnapshot.child("y").getValue(Float.class);
+                    String installazione = dataSnapshot.child("installazione").getValue(String.class);
                     float Kx = dataSnapshot.child("kx").getValue(Float.class);
                     float Ky = dataSnapshot.child("ky").getValue(Float.class);
 
 
                     circleImageView = new CircleImageView(getApplicationContext());
-                    switch (sorgente) {
-                        case "Led":
-                            circleImageView.setImageResource(R.drawable.viola);
+                    switch (installazione) {
+                        case "CONTROSOFFITTO":
+                            circleImageView.setImageResource(R.drawable.controsoffitto);
                             break;
-                        case "Fluorescente":
-                            circleImageView.setImageResource(R.drawable.verde);
+
+                        case "ESTERNA":
+                            circleImageView.setImageResource(R.drawable.esterna);
                             break;
-                        case "Scarica":
-                            circleImageView.setImageResource(R.drawable.rosso);
+
+                        case "INCASSO PAVIM_PARETE":
+                            circleImageView.setImageResource(R.drawable.incasso);
+                            break;
+
+                        case "LED":
+                            circleImageView.setImageResource(R.drawable.led);
+                            break;
+
+                        case "PARETE":
+                            circleImageView.setImageResource(R.drawable.parete);
+                            break;
+
+                        case "SOFFITTO":
+                            circleImageView.setImageResource(R.drawable.soffitto);
+                            break;
+
+                        case "SOSPENSIONE":
+                            circleImageView.setImageResource(R.drawable.sospensione);
                             break;
 
                     }
@@ -338,12 +364,17 @@ public class CensimentiInterni extends AppCompatActivity {
                     circleImageView.setX(x);
                     circleImageView.setY(y);
 
-//                    int width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, getResources().getDisplayMetrics());
-//                    int height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, getResources().getDisplayMetrics());
-                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(larghezzaSchermo/40, altezzaSchermo/64);
-//                    float p = larghezzaSchermo / width;
-//                    float pp = altezzaSchermo / height;
-//                    Log.d("wawa", "" + p + " -- " + pp);
+                    RelativeLayout.LayoutParams params;
+                    if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+                        params = new RelativeLayout.LayoutParams(larghezzaSchermo/40, altezzaSchermo/64);
+
+                    }
+                    else {
+                       params = new RelativeLayout.LayoutParams(larghezzaSchermo/64, altezzaSchermo/40);
+
+                    }
+//                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(larghezzaSchermo/40, altezzaSchermo/64);
+
                     circleImageView.setLayoutParams(params);
                     relativeLayout.addView(circleImageView);
 
