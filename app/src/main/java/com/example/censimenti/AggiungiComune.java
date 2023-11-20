@@ -178,8 +178,6 @@ public class AggiungiComune extends AppCompatActivity {
 
             }
         });
-
-
     }
 
     public void elencoUte(final FirebaseCallback callback) {
@@ -203,7 +201,6 @@ public class AggiungiComune extends AppCompatActivity {
             }
         });
     }
-
 
     public interface FirebaseCallback {
         void onCallback(String[] data);

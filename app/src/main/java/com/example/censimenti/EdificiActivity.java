@@ -93,7 +93,8 @@ public class EdificiActivity extends AppCompatActivity {
 
         try {
             Workbook workbook = new XSSFWorkbook();
-            Sheet sheet = workbook.createSheet("Dati");
+            Sheet sheet = workbook.createSheet("Lampade");
+            Sheet sheet1 = workbook.createSheet("Locali");
 
             Row headerRow = sheet.createRow(0);
             headerRow.createCell(0).setCellValue("Comune");
@@ -107,7 +108,12 @@ public class EdificiActivity extends AppCompatActivity {
             headerRow.createCell(8).setCellValue("Attacco");
             headerRow.createCell(9).setCellValue("Installazione");
 
-
+            Row headerRow1 = sheet1.createRow(0);
+            headerRow1.createCell(0).setCellValue("Comune");
+            headerRow1.createCell(1).setCellValue("Edificio");
+            headerRow1.createCell(2).setCellValue("Piano");
+            headerRow1.createCell(3).setCellValue("Locale");
+            headerRow1.createCell(4).setCellValue("Note");
 
             refComuni.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -145,6 +151,19 @@ public class EdificiActivity extends AppCompatActivity {
                                         row.createCell(8).setCellValue(attacco);
                                         row.createCell(9).setCellValue(installazione);
 
+                                    }
+
+                                    for (DataSnapshot localeSnapshot : planimetriaSnapshot.child("Locali").getChildren()) {
+                                        String locale = localeSnapshot.child("nome").getValue(String.class);
+                                        String note = localeSnapshot.child("note").getValue(String.class);
+
+
+                                        Row row1 = sheet1.createRow(sheet1.getLastRowNum()+1);
+                                        row1.createCell(0).setCellValue(nomeComune);
+                                        row1.createCell(1).setCellValue(nomeEdificio);
+                                        row1.createCell(2).setCellValue(nomePlanimetria);
+                                        row1.createCell(3).setCellValue(locale);
+                                        row1.createCell(4).setCellValue(note);
                                     }
                                 }
                             }

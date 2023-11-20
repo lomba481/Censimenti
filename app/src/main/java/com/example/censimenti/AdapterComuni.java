@@ -1,5 +1,6 @@
 package com.example.censimenti;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -52,6 +53,7 @@ public class AdapterComuni extends FirebaseRecyclerAdapter<AggiungiComune.Comune
 
         puntini.setOnClickListener(new View.OnClickListener() {
 
+            @SuppressLint("ResourceAsColor")
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -82,6 +84,7 @@ public class AdapterComuni extends FirebaseRecyclerAdapter<AggiungiComune.Comune
 
                     }
                 });
+
                 builder.setNegativeButton("Elimina", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

@@ -55,20 +55,20 @@
             app:fab_addButtonColorPressed="@color/white">
 
             <com.getbase.floatingactionbutton.FloatingActionButton
+                android:id="@+id/lampadaFAB"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:fab_colorDisabled="@android:color/darker_gray"
-                app:fab_colorNormal="@color/orange_restart"
+                app:fab_colorNormal="@color/gray"
                 app:fab_colorPressed="@color/white"
                 app:fab_icon="@drawable/baseline_light_24"
                 app:fab_size="mini"
                 app:fab_title="Lampada" />
 
             <com.getbase.floatingactionbutton.FloatingActionButton
+                android:id="@+id/localeFAB"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:fab_colorDisabled="@android:color/darker_gray"
-                app:fab_colorNormal="@color/orange_restart"
+                app:fab_colorNormal="@color/gray"
                 app:fab_colorPressed="@color/white"
                 app:fab_icon="@drawable/baseline_square_foot_24"
                 app:fab_size="mini"

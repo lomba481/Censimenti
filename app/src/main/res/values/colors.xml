@@ -11,4 +11,5 @@
     <color name="parete">#FF7F00</color>
     <color name="soffitto">#7F00FF</color>
     <color name="sospensione">#00811F</color>
+    <color name="gray">#FFAAAAAA</color>
 </resources>

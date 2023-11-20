@@ -34,6 +34,7 @@
         <activity android:name=".AggiungiLampade" />
         <activity android:name=".CensimentiInterni" />
         <activity android:name=".Utenti.UtentiActivity" />
+        <activity android:name=".AggiungiLocale" />
 
     </application>
 

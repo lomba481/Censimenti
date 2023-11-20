@@ -19,7 +19,7 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -32,7 +32,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -44,19 +44,25 @@ public class CensimentiInterni extends AppCompatActivity {
 
     RelativeLayout relativeLayout;
     CircleImageView circleImageView;
-    FloatingActionButton indietroBtn;
+    com.google.android.material.floatingactionbutton.FloatingActionButton indietroBtn;
+
+    com.getbase.floatingactionbutton.FloatingActionButton  lampadaFAB, localeFAB;
     TextView textView;
+    ImageView localeImage;
     @SuppressLint("UseSwitchCompatOrMaterialCode")
     Switch switchBtn;
 
-    static DatabaseReference refLampade, lref1;
+    static DatabaseReference refLampade, refLocale;
 
-    String keyPlanimetria, keyLampada;
+    String keyPlanimetria, keyLampada, keyLocale;
     String imageUrl;
     float x, y;
     int larghezzaSchermo, altezzaSchermo, orientation;
+    boolean isFABonLocale = false;
+    boolean isFABonLampada = false;
 
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,18 +77,18 @@ public class CensimentiInterni extends AppCompatActivity {
         larghezzaSchermo = size.x;
         altezzaSchermo = size.y;
 
-        Log.d("schermo", "largh: " + larghezzaSchermo + " --- altez: " + altezzaSchermo);
-
         relativeLayout = findViewById(R.id.relativeLayout);
         switchBtn = findViewById(R.id.switchBtn);
-
         indietroBtn = findViewById(R.id.indietroBtn);
+        lampadaFAB = findViewById(R.id.lampadaFAB);
+        localeFAB = findViewById(R.id.localeFAB);
 
         keyPlanimetria = getIntent().getStringExtra("key");
 
         imageUrl = getIntent().getStringExtra("imageUrl");
 
         refLampade = refPlanimetrie.child(keyPlanimetria).child("Lampade");
+        refLocale = refPlanimetrie.child(keyPlanimetria).child("Locali");
 
         loadUrlAsDrawable(imageUrl, getApplicationContext(), new Icon.OnDrawableLoadedListener() {
             @Override
@@ -98,32 +104,97 @@ public class CensimentiInterni extends AppCompatActivity {
             }
         });
 
-
-//       lref1 = lRef.child(keyPlanimetria);
        recuperaDati();
 
+       lampadaFAB.setOnClickListener(new View.OnClickListener() {
+           @SuppressLint("ClickableViewAccessibility")
+           @Override
+           public void onClick(View v) {
 
+               isFABonLampada = !isFABonLampada;
 
-       switchBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+               updateFABcolorLampada(lampadaFAB);
+
+//               if(isFABonLampada && !isFABonLocale) {
+//
+//                   relativeLayout.setOnTouchListener(new View.OnTouchListener() {
+//                       @SuppressLint("ClickableViewAccessibility")
+//                       @Override
+//                       public boolean onTouch(View v, MotionEvent event) {
+//                           addNewCircle(event);
+//                           Intent intent = new Intent(CensimentiInterni.this, AggiungiLampade.class);
+//                           intent.putExtra("x", x);
+//                           intent.putExtra("y", y);
+//                           intent.putExtra("keyLampada", keyLampada);
+//                           startActivity(intent);
+//
+//                           return false;
+//                       }
+//                   });
+//
+//               } else {
+//                   relativeLayout.setOnTouchListener(null);
+//               }
+           }
+       });
+
+       localeFAB.setOnClickListener(new View.OnClickListener() {
+           @SuppressLint("ClickableViewAccessibility")
+           @Override
+           public void onClick(View v) {
+               isFABonLocale = !isFABonLocale;
+
+               updateFABcolorLocale(localeFAB);
+
+//               if(isFABonLocale && !isFABonLampada) {
+//                   relativeLayout.setOnTouchListener(new View.OnTouchListener() {
+//
+//                       @SuppressLint("ClickableViewAccessibility")
+//                       @Override
+//                       public boolean onTouch(View v, MotionEvent event) {
+//                           keyLocale = refLocale.push().getKey();
+//                           Intent intent = new Intent(CensimentiInterni.this, AggiungiLocale.class);
+//                           intent.putExtra("x", x);
+//                           intent.putExtra("y", y);
+//                           intent.putExtra("keyLocale", keyLocale);
+//                           startActivity(intent);
+//
+//                           return false;
+//                       }
+//
+//                   });
+//               } else {
+//                   relativeLayout.setOnTouchListener(null);
+//               }
+           }
+       });
+        relativeLayout.setOnTouchListener(new View.OnTouchListener() {
             @SuppressLint("ClickableViewAccessibility")
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    relativeLayout.setOnTouchListener(new View.OnTouchListener() {
-                        @Override
-                        public boolean onTouch(View v, MotionEvent event) {
-                            addNewCircle(event);
-                            Intent intent = new Intent(CensimentiInterni.this, AggiungiLampade.class);
-                            intent.putExtra("x", x);
-                            intent.putExtra("y", y);
-                            intent.putExtra("keyLampada", keyLampada);
-//                            intent.putExtra("keyPlanimetria", keyPlanimetria);
-                            Log.d ("messaggio", "apro da nuovo");
-                            startActivity(intent);
-                            return false;
-                        }
-                    });
-                } else {
+            public boolean onTouch(View v, MotionEvent event) {
+                if (isFABonLampada && !isFABonLocale) {
+                    Log.d("stato99", "lamp");
+                    addNewCircle(event);
+                    Intent intent = new Intent(CensimentiInterni.this, AggiungiLampade.class);
+                    intent.putExtra("x", x);
+                    intent.putExtra("y", y);
+                    intent.putExtra("keyLampada", keyLampada);
+                    startActivity(intent);
+                }
+                else if (isFABonLocale && !isFABonLampada) {
+                    Log.d("stato99", "loc");
+                    keyLocale = refLocale.push().getKey();
+                    addNewLocal(event);
+                    Intent intent = new Intent(CensimentiInterni.this, AggiungiLocale.class);
+                    intent.putExtra("x", x);
+                    intent.putExtra("y", y);
+                    intent.putExtra("keyLocale", keyLocale);
+                    startActivity(intent);
+
+                }
+                else {
+                    Log.d("stato99", "nessuno");
+                    Log.d("stato", "lamp: " + isFABonLampada + " -- loc: " + isFABonLocale);
                     for (int i = 0; i < relativeLayout.getChildCount(); i++) {
                         View child = relativeLayout.getChildAt(i);
                         if (child instanceof CircleImageView) {
@@ -146,14 +217,89 @@ public class CensimentiInterni extends AppCompatActivity {
 
                         }
                     }
-                    relativeLayout.setOnTouchListener(null);
                 }
+                return false;
             }
-       });
+        });
+
+
+//       switchBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            @SuppressLint("ClickableViewAccessibility")
+//            @Override
+//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                if (isChecked) {
+//                    relativeLayout.setOnTouchListener(new View.OnTouchListener() {
+//                        @Override
+//                        public boolean onTouch(View v, MotionEvent event) {
+//                            addNewCircle(event);
+//                            Intent intent = new Intent(CensimentiInterni.this, AggiungiLampade.class);
+//                            intent.putExtra("x", x);
+//                            intent.putExtra("y", y);
+//                            intent.putExtra("keyLampada", keyLampada);
+//                            startActivity(intent);
+//                            return false;
+//                        }
+//                    });
+//                } else {
+//                    for (int i = 0; i < relativeLayout.getChildCount(); i++) {
+//                        View child = relativeLayout.getChildAt(i);
+//                        if (child instanceof CircleImageView) {
+//
+//                            child.setOnLongClickListener(new View.OnLongClickListener() {
+//                                @Override
+//                                public boolean onLongClick(View v) {
+//                                    handleImageLongClick((CircleImageView) v);
+//                                    return true;
+//                                }
+//                            });
+//
+//                            child.setOnClickListener(new View.OnClickListener() {
+//                                @Override
+//                                public void onClick(View v) {
+//                                    handleImageClick(v);
+//
+//                                }
+//                            });
+//
+//                        }
+//                    }
+//                    relativeLayout.setOnTouchListener(null);
+//                }
+//            }
+//       });
 
     }
 
+    private void updateFABcolorLocale(FloatingActionButton fab) {
+        if (isFABonLocale) {
+            fab.setColorNormalResId(R.color.orange_restart);
 
+        } else {
+            fab.setColorNormalResId(R.color.gray);
+        }
+    }
+
+    private void updateFABcolorLampada(FloatingActionButton fab) {
+        if (isFABonLampada) {
+            fab.setColorNormalResId(R.color.orange_restart);
+
+        } else {
+            fab.setColorNormalResId(R.color.gray);
+        }
+    }
+
+    private void addNewLocal (MotionEvent event) {
+        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+            x = event.getX() - (larghezzaSchermo/80);
+            y = event.getY() - (altezzaSchermo/128);
+        } else {
+            x = event.getX() - (larghezzaSchermo/128);
+            y = event.getY() - (altezzaSchermo/80);
+        }
+
+
+
+    }
 
     @SuppressLint("ResourceAsColor")
     private void addNewCircle(MotionEvent event) {
@@ -167,19 +313,6 @@ public class CensimentiInterni extends AppCompatActivity {
             x = event.getX() - (larghezzaSchermo/128);
             y = event.getY() - (altezzaSchermo/80);
         }
-
-//        x = event.getX();
-//        y = event.getY();
-
-//        circleImageView.setX(x);
-//        circleImageView.setY(y);
-
-//        int width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, getResources().getDisplayMetrics());
-//        int height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, getResources().getDisplayMetrics());
-//        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(larghezzaSchermo/40, altezzaSchermo/64);
-//        circleImageView.setLayoutParams(params);
-
-
 
         textView = new TextView(getApplicationContext());
         textView.setBackgroundColor(Color.BLUE);
@@ -207,8 +340,6 @@ public class CensimentiInterni extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-//                    float x1 = dataSnapshot.child("x").getValue(Float.class);
-//                    float y1 = dataSnapshot.child("y").getValue(Float.class);
 
                     float Kx = dataSnapshot.child("kx").getValue(Float.class);
                     float Ky = dataSnapshot.child("ky").getValue(Float.class);
@@ -221,8 +352,6 @@ public class CensimentiInterni extends AppCompatActivity {
                         intent.putExtra("x", x1);
                         intent.putExtra("y", y1);
                         intent.putExtra("keyLampada", keyLampada);
-//                        intent.putExtra("keyPlanimetria", keyPlanimetria);
-                        Log.d("messaggio", "apro");
                         startActivity(intent);
 
                     }
@@ -231,8 +360,6 @@ public class CensimentiInterni extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
-
 
             }
         });
@@ -246,8 +373,6 @@ public class CensimentiInterni extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-//                    float x1 = dataSnapshot.child("x").getValue(Float.class);
-//                    float y1 = dataSnapshot.child("y").getValue(Float.class);
 
                     float Kx = dataSnapshot.child("kx").getValue(Float.class);
                     float Ky = dataSnapshot.child("ky").getValue(Float.class);
@@ -266,7 +391,6 @@ public class CensimentiInterni extends AppCompatActivity {
                                 Intent intent = new Intent(CensimentiInterni.this, CensimentiInterni.class);
                                 intent.putExtra("key", keyPlanimetria);
                                 intent.putExtra("imageUrl", imageUrl);
-                                Log.d("messaggio", "apro da elimina");
                                 startActivity(intent);
                                 finish();
                             }
@@ -313,6 +437,41 @@ public class CensimentiInterni extends AppCompatActivity {
     }
 
     private void recuperaDati() {
+
+        refLocale.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    float Kx = dataSnapshot.child("kx").getValue(Float.class);
+                    float Ky = dataSnapshot.child("ky").getValue(Float.class);
+                    float x = larghezzaSchermo / Kx;
+                    float y = altezzaSchermo / Ky;
+
+                    localeImage = new ImageView(getApplicationContext());
+                    localeImage.setImageResource(R.drawable.baseline_place_24_red);
+                    localeImage.setX(x);
+                    localeImage.setY(y);
+
+                    RelativeLayout.LayoutParams params;
+                    if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+                        params = new RelativeLayout.LayoutParams(larghezzaSchermo/40, altezzaSchermo/64);
+
+                    }
+                    else {
+                        params = new RelativeLayout.LayoutParams(larghezzaSchermo/64, altezzaSchermo/40);
+
+                    }
+
+                    localeImage.setLayoutParams(params);
+                    relativeLayout.addView(localeImage);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
 
         refLampade.addValueEventListener(new ValueEventListener() {
@@ -373,7 +532,6 @@ public class CensimentiInterni extends AppCompatActivity {
                        params = new RelativeLayout.LayoutParams(larghezzaSchermo/64, altezzaSchermo/40);
 
                     }
-//                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(larghezzaSchermo/40, altezzaSchermo/64);
 
                     circleImageView.setLayoutParams(params);
                     relativeLayout.addView(circleImageView);

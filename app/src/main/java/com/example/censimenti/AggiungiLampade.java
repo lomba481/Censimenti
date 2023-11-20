@@ -1,6 +1,7 @@
 package com.example.censimenti;
 
 import static com.example.censimenti.CensimentiInterni.refLampade;
+import static com.example.censimenti.CensimentiInterni.refLocale;
 
 import android.content.Context;
 import android.content.Intent;
@@ -9,7 +10,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
@@ -38,6 +38,8 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AggiungiLampade extends AppCompatActivity {
 
@@ -229,7 +231,6 @@ public class AggiungiLampade extends AppCompatActivity {
         salva.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("ghgh", input);
 
                 if (!input.matches("PT-[0-9]{3}")) {
                     Toast.makeText(AggiungiLampade.this, "Scrivi meglio il locale se no Ago si incazza", Toast.LENGTH_SHORT).show();
@@ -276,10 +277,6 @@ public class AggiungiLampade extends AppCompatActivity {
                         throw new RuntimeException(e);
                     }
                 }
-
-
-
-
             }
         });
 
@@ -291,7 +288,6 @@ public class AggiungiLampade extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 finish();
-
             }
         });
 
@@ -523,5 +519,28 @@ public class AggiungiLampade extends AppCompatActivity {
             }
         });
 
+    }
+
+    public void elencoLocali(final AggiungiLampade.FirebaseCallback callback) {
+
+        refLocale.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                List<String> stringList = new ArrayList<String>();
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                    stringList.add(ds.child("nome").getValue(String.class));
+                }
+                String[] dataArray = stringList.toArray(new String[0]);
+                callback.onCallback(dataArray);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Gestisci eventuali errori
+            }
+        });
+    }
+    public interface FirebaseCallback {
+        void onCallback(String[] data);
     }
 }
