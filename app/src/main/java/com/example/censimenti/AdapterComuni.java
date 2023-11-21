@@ -23,14 +23,14 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
-public class AdapterComuni extends FirebaseRecyclerAdapter<AggiungiComune.Comune, AdapterComuni.comuniviewHolder> {
+public class AdapterComuni extends FirebaseRecyclerAdapter<Comune, AdapterComuni.comuniviewHolder> {
     static DatabaseReference refComuni;
     CardView cardView;
     ImageView puntini;
     Context context;
 
 
-    public AdapterComuni(FirebaseRecyclerOptions<AggiungiComune.Comune> options) {
+    public AdapterComuni(FirebaseRecyclerOptions<Comune> options) {
         super(options);
     }
 
@@ -43,7 +43,7 @@ public class AdapterComuni extends FirebaseRecyclerAdapter<AggiungiComune.Comune
     }
 
     @Override
-    protected void onBindViewHolder(@NonNull comuniviewHolder holder, int position, @NonNull AggiungiComune.Comune model) {
+    protected void onBindViewHolder(@NonNull comuniviewHolder holder, int position, @NonNull Comune model) {
         holder.nome.setText(model.getNome());
         holder.nCommessa.setText(model.getnCommessa());
 

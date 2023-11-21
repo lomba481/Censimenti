@@ -82,6 +82,7 @@ public class AggiungiPlanimetria extends AppCompatActivity {
                 String nome = nomePlanimetria.getText().toString();
                 Planimetria planimetria = new Planimetria();
                 planimetria.setNome(nome);
+                planimetria.setConteggio(0L);
                 try {
                     addDataFirebase(planimetria);
                     finish();

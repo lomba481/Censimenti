@@ -51,9 +51,9 @@ public class ComuniActivity extends AppCompatActivity {
 
 
 
-        FirebaseRecyclerOptions<AggiungiComune.Comune> options
-                = new FirebaseRecyclerOptions.Builder<AggiungiComune.Comune>()
-                .setQuery(refComuni, AggiungiComune.Comune.class)
+        FirebaseRecyclerOptions<Comune> options
+                = new FirebaseRecyclerOptions.Builder<Comune>()
+                .setQuery(refComuni, Comune.class)
                 .build();
         adapterComuni = new AdapterComuni(options);
         recyclerView.setAdapter(adapterComuni);

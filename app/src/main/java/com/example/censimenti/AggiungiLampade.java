@@ -1,5 +1,6 @@
 package com.example.censimenti;
 
+import static com.example.censimenti.AdapterPlanimetrie.refPlanimetrie;
 import static com.example.censimenti.CensimentiInterni.refLampade;
 import static com.example.censimenti.CensimentiInterni.refLocale;
 
@@ -8,8 +9,7 @@ import android.content.Intent;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
@@ -39,20 +39,20 @@ import com.google.firebase.storage.UploadTask;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.List;
 
 public class AggiungiLampade extends AppCompatActivity {
 
-    TextInputEditText potenzaLampada, sorgenteLampada, attaccoLampada, localeLampada;
-    AutoCompleteTextView nomeLampada, tipoLampada, installazioneLampada;
+    TextInputEditText potenzaLampada, sorgenteLampada, attaccoLampada;
+    AutoCompleteTextView nomeLampada, tipoLampada, installazioneLampada, localeLampada;
     Button salva, indietro;
-    String keyLampada;
+    String keyLampada, keyPlanimetria;
     RelativeLayout scegliImmagine;
     ImageView imageView;
     float x, y;
-    String input= null;
+    Long cont;
 
     Uri uri = null;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -76,6 +76,7 @@ public class AggiungiLampade extends AppCompatActivity {
         attaccoLampada = findViewById(R.id.attaccoLampada);
         installazioneLampada = findViewById(R.id.installazioneLampada);
         keyLampada = getIntent().getStringExtra("keyLampada");
+        keyPlanimetria = getIntent().getStringExtra("keyPlanimetria");
 
 
         x = getIntent().getFloatExtra("x", 0);
@@ -112,7 +113,7 @@ public class AggiungiLampade extends AppCompatActivity {
         String[] opzioniApplique = {"SDF09.a - APPARECCHIO ILLUMINANTE CON LAMPADA FLC 18W", "SDF09.b - APPARECCHIO ILLUMINANTE CON LAMPADE FLC 2x18W",
                 "SDF09.c - APPARECCHIO ILLUMINANTE CON LAMPADA FLC 26W", "SDF09.d - APPARECCHIO ILLUMINANTE CON LAMPADA FLC 32W",
                 "SDF09.l - APPARECCHIO ILLUMINANTE CON LAMPADE FLC 2x26W", "SDF10.a - APPARECCHIO ILLUMINANTE CON LAMPADE INCANDESCENZA 60W",
-                "SDF10.a - APPARECCHIO ILLUMINANTE CON LAMPADE INCANDESCENZA 100W", "SDF10.a - APPARECCHIO ILLUMINANTE CON LAMPADE INCANDESCENZA 40W"};
+                "SDF10.b - APPARECCHIO ILLUMINANTE CON LAMPADE INCANDESCENZA 100W", "SDF10.c - APPARECCHIO ILLUMINANTE CON LAMPADE INCANDESCENZA 40W"};
 
         String[] opzioniRiflettori = {"SDF14.b - RIFLETTORE CON LAMPADA A SCARICA 250W", "SDF14.c - RIFLETTORE CON LAMPADA A SCARICA 400W"};
 
@@ -123,6 +124,7 @@ public class AggiungiLampade extends AppCompatActivity {
 
         String[] opzioniInstallazione = {"CONTROSOFFITTO", "ESTERNA", "INCASSO PAVIM_PARETE", "LED", "PARETE", "SOFFITTO", "SOSPENSIONE"};
 
+        riempiLocali();
 
         autoCompleteMenu(opzioniTipo, tipoLampada);
         autoCompleteMenu(opzioniInstallazione, installazioneLampada);
@@ -211,71 +213,70 @@ public class AggiungiLampade extends AppCompatActivity {
                         .start();
             }
         });
-        localeLampada.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                input = s.toString();
-            }
-        });
 
         salva.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                if (!input.matches("PT-[0-9]{3}")) {
-                    Toast.makeText(AggiungiLampade.this, "Scrivi meglio il locale se no Ago si incazza", Toast.LENGTH_SHORT).show();
-                }
 
-                else if (installazioneLampada.getText().toString().equals("")) {
+                if (installazioneLampada.getText().toString().equals("")) {
                     Toast.makeText(AggiungiLampade.this, "Devi compilare il campo \"Installazione\"", Toast.LENGTH_SHORT).show();
 
-                }
-
-                else {
+                } else {
                     // recupero i dati per poi eseguire salvataggio in firebase
+                    refPlanimetrie.child(keyPlanimetria).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            cont = snapshot.child("conteggio").getValue(Long.class);
+                            Log.d("conteggio1", "" + cont);
+                            cont = cont + 1;
+                            Log.d("conteggio2", "" + cont);
+                            refPlanimetrie.child(keyPlanimetria).child("conteggio").setValue(cont);
+                            Log.d("conteggio3", "" + cont);
+                            Lampada lampada = new Lampada(localeLampada.getText().toString(),
+                                    tipoLampada.getText().toString(),
+                                    nomeLampada.getText().toString(),
+                                    potenzaLampada.getText().toString(),
+                                    sorgenteLampada.getText().toString(),
+                                    attaccoLampada.getText().toString(),
+                                    installazioneLampada.getText().toString(),
+                                    "",
+                                    x, y, Kx, Ky, cont);
 
-                    Lampada lampada = new Lampada(localeLampada.getText().toString(),
-                            tipoLampada.getText().toString(),
-                            nomeLampada.getText().toString(),
-                            potenzaLampada.getText().toString(),
-                            sorgenteLampada.getText().toString(),
-                            attaccoLampada.getText().toString(),
-                            installazioneLampada.getText().toString(),
-                            null,
-                            x, y, Kx, Ky);
-                    try {
-                        if (uri == null) {
-                            lampada.setFoto("");
-                            refLampade.child(keyLampada).setValue(lampada);
-                            refLampade.addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                    Toast.makeText(AggiungiLampade.this, "Lampada aggiunta con successo", Toast.LENGTH_SHORT).show();
-                                }
 
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError error) {
-                                    Toast.makeText(AggiungiLampade.this, "Non riesco ad inserire i dati" + error, Toast.LENGTH_SHORT).show();
+                            try {
+                                if (uri == null) {
+                                    lampada.setFoto("");
+                                    refLampade.child(keyLampada).setValue(lampada);
+                                    refLampade.addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                            Toast.makeText(AggiungiLampade.this, "Lampada aggiunta con successo", Toast.LENGTH_SHORT).show();
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+                                            Toast.makeText(AggiungiLampade.this, "Non riesco ad inserire i dati" + error, Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                } else {
+                                    addDataFirebase(lampada);
                                 }
-                            });
+                                finish();
+                            } catch (FileNotFoundException e) {
+                                throw new RuntimeException(e);
+                            }
                         }
-                        else {
-                            addDataFirebase(lampada);
+
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
                         }
-                        finish();
-                    } catch (FileNotFoundException e) {
-                        throw new RuntimeException(e);
-                    }
+                    });
+
+
                 }
             }
         });
@@ -290,6 +291,28 @@ public class AggiungiLampade extends AppCompatActivity {
                 finish();
             }
         });
+
+    }
+
+    private void riempiLocali() {
+        ArrayList<String> listaLocali = new ArrayList<String>();
+        refLocale.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    String nome = dataSnapshot.child("nome").getValue(String.class);
+                    Log.d("locale", nome);
+                    listaLocali.add(nome);
+                }
+                autoCompleteMenu(listaLocali.toArray(new String[0]), localeLampada);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
 
     }
 
@@ -321,10 +344,10 @@ public class AggiungiLampade extends AppCompatActivity {
 
         });
 
-        refLampade.addValueEventListener(new ValueEventListener() {
+        refLampade.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Toast.makeText(AggiungiLampade.this, "dati aggiunti", Toast.LENGTH_SHORT).show();
+                Toast.makeText(AggiungiLampade.this, "Lampada aggiunta con successo", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -521,26 +544,5 @@ public class AggiungiLampade extends AppCompatActivity {
 
     }
 
-    public void elencoLocali(final AggiungiLampade.FirebaseCallback callback) {
 
-        refLocale.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                List<String> stringList = new ArrayList<String>();
-                for (DataSnapshot ds : snapshot.getChildren()) {
-                    stringList.add(ds.child("nome").getValue(String.class));
-                }
-                String[] dataArray = stringList.toArray(new String[0]);
-                callback.onCallback(dataArray);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                // Gestisci eventuali errori
-            }
-        });
-    }
-    public interface FirebaseCallback {
-        void onCallback(String[] data);
-    }
 }

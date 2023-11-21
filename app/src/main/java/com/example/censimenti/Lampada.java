@@ -3,11 +3,12 @@ package com.example.censimenti;
 public class Lampada {
     String locale, tipo, nome, potenza, sorgente, attacco, installazione, foto;
     float x, y, Kx, Ky;
+    Long id;
 
     public Lampada() {
     }
 
-    public Lampada(String locale, String tipo, String nome, String potenza, String sorgente, String attacco, String installazione, String foto, float x, float y, float kx, float ky) {
+    public Lampada(String locale, String tipo, String nome, String potenza, String sorgente, String attacco, String installazione, String foto, float x, float y, float kx, float ky, Long id) {
         this.locale = locale;
         this.tipo = tipo;
         this.nome = nome;
@@ -20,6 +21,15 @@ public class Lampada {
         this.y = y;
         Kx = kx;
         Ky = ky;
+        this.id = id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getLocale() {

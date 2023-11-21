@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
@@ -31,7 +33,7 @@ public class AggiungiLocale extends AppCompatActivity {
     Button salvaBtn, indietroBtn;
     String keyLocale;
     float x, y;
-
+    String input= null;
     Uri uri;
     ImageView imageView;
 
@@ -71,25 +73,47 @@ public class AggiungiLocale extends AppCompatActivity {
             }
         });
 
+        nomeLocale.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                input = s.toString();
+            }
+        });
+
         salvaBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Locale locale = new Locale(nomeLocale.getText().toString(),
-                        note.getText().toString(),
-                        null, Kx, Ky);
-                refLocale.child(keyLocale).setValue(locale);
-                refLocale.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        Toast.makeText(AggiungiLocale.this, "Locale aggiunto con successo", Toast.LENGTH_SHORT).show();
-                    }
+                if (!input.matches("PT-[0-9]{3}")) {
+                    Toast.makeText(AggiungiLocale.this, "Scrivi meglio il locale se no Ago si incazza", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Locale locale = new Locale(nomeLocale.getText().toString(),
+                            note.getText().toString(),
+                            null, Kx, Ky);
+                    refLocale.child(keyLocale).setValue(locale);
+                    refLocale.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            Toast.makeText(AggiungiLocale.this, "Locale aggiunto con successo", Toast.LENGTH_SHORT).show();
+                        }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        Toast.makeText(AggiungiLocale.this, "Non riesco ad inserire i dati" + error, Toast.LENGTH_SHORT).show();
-                    }
-                });
-                finish();
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            Toast.makeText(AggiungiLocale.this, "Non riesco ad inserire i dati" + error, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    finish();
+                }
             }
         });
 
