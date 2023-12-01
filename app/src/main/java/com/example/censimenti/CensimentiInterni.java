@@ -443,12 +443,23 @@ public class CensimentiInterni extends AppCompatActivity {
                     circleImageView.setY(y);
 
                     RelativeLayout.LayoutParams params;
+                    int width1, height1;
+                    float dpx, dpy;
                     if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-                        params = new RelativeLayout.LayoutParams(larghezzaSchermo/40, altezzaSchermo/64);
+                        width1 = larghezzaSchermo/40;
+                        height1 = altezzaSchermo/64;
+                        params = new RelativeLayout.LayoutParams(width1, height1);
+                        dpx = larghezzaSchermo/10;
+                        dpy = altezzaSchermo/19;
+
 
                     }
                     else {
-                       params = new RelativeLayout.LayoutParams(larghezzaSchermo/64, altezzaSchermo/40);
+                        width1 = larghezzaSchermo/64;
+                        height1 = altezzaSchermo/40;
+                        params = new RelativeLayout.LayoutParams(width1, height1);
+                        dpx = larghezzaSchermo/19;
+                        dpy = altezzaSchermo/10;
 
                     }
 
@@ -458,23 +469,13 @@ public class CensimentiInterni extends AppCompatActivity {
                     textView = new TextView(getApplicationContext());
 
                     textView.setTextColor(Color.BLACK);
-                    textView.setTextSize(7);
+                    textView.setTextSize(15);
                     textView.setGravity(Gravity.CENTER);
 
-                    textView.setX(x-5);
-                    textView.setY(y-50);
+
+                    textView.setX(x);
+                    textView.setY(y-20);
                     textView.setText(id.toString());
-
-
-                    int width1, height1;
-                    if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-                        width1 = larghezzaSchermo/40;
-                        height1 = altezzaSchermo/64;
-                    }
-                    else {
-                        width1 = larghezzaSchermo/64;
-                        height1 = altezzaSchermo/40;
-                    }
 
                     textView.setWidth(width1);
                     textView.setHeight(height1);

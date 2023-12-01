@@ -1,6 +1,7 @@
 package com.example.censimenti;
 
 import static com.example.censimenti.AdapterEdifici.refEdifici;
+import static com.example.censimenti.EdificiActivity.storageEdifici;
 
 import android.os.Bundle;
 import android.view.View;
@@ -63,6 +64,7 @@ public class AggiungiEdificio extends AppCompatActivity {
                 edificio.setNome(nome);
                 edificio.setIndirizzo(indirizzo);
                 refEdifici.child(keyEdificio).setValue(edificio);
+                storageEdifici.child(keyEdificio);
 
                 refEdifici.addValueEventListener(new ValueEventListener() {
                     @Override

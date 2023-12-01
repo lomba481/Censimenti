@@ -2,6 +2,7 @@ package com.example.censimenti;
 
 import static com.example.censimenti.AdapterComuni.refComuni;
 import static com.example.censimenti.AdapterEdifici.refEdifici;
+import static com.example.censimenti.ComuniActivity.storageComuni;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.StorageReference;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -33,6 +35,7 @@ import java.io.IOException;
 
 public class EdificiActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
+    static StorageReference storageEdifici;
     private AdapterEdifici adapterEdifici;
     FloatingActionButton addButton, esportaBtn;
     String keyCommessa, keyEdificio;
@@ -46,6 +49,7 @@ public class EdificiActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.edificiRecycler);
         keyCommessa = getIntent().getStringExtra("key");
         refEdifici = refComuni.child(keyCommessa).child("Edifici");
+        storageEdifici = storageComuni.child(keyCommessa).child("Edifici");
 //        eRef = FirebaseDatabase.getInstance().getReference("edificio");
 
 //         Query query = eRef.child(keyCommessa).orderByChild("key").equalTo(keyCommessa);

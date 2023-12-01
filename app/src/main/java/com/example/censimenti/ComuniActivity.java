@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -16,19 +15,20 @@ import com.example.censimenti.Utenti.UtentiActivity;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 public class ComuniActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
 
-    Toolbar toolbar;
+    static StorageReference storageComuni;
+
     private AdapterComuni adapterComuni;
     FloatingActionButton addButton, gestioneUtenti;
-    String key;
+
 
     String username;
-
-//    static DatabaseReference ref;
 
 
     @SuppressLint("ClickableViewAccessibility")
@@ -41,6 +41,7 @@ public class ComuniActivity extends AppCompatActivity {
 
         username = getIntent().getStringExtra("nomeCognome");
 
+        storageComuni = FirebaseStorage.getInstance().getReference("Comuni");
         refComuni = FirebaseDatabase.getInstance().getReference("Comuni");
         recyclerView = findViewById(R.id.comuneRecycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));

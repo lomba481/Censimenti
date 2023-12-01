@@ -1,6 +1,7 @@
 package com.example.censimenti;
 
 import static com.example.censimenti.AdapterComuni.refComuni;
+import static com.example.censimenti.ComuniActivity.storageComuni;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -149,6 +150,7 @@ public class AggiungiComune extends AppCompatActivity {
                 List<String>stringList = new ArrayList<>(Arrays.asList(strings));
 
                 refComuni.child(key).setValue(comune);
+                storageComuni.child(key);
                 for (int i=0;i<stringList.size();i++){
                     refComuni.child(key).child("utenti").push().setValue(stringList.get(i));
                 }
@@ -158,7 +160,7 @@ public class AggiungiComune extends AppCompatActivity {
                 refComuni.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        Toast.makeText(AggiungiComune.this, "dati aggiunti", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AggiungiComune.this, "Comune aggiunto con Successo!", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
