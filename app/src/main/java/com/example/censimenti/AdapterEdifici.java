@@ -77,7 +77,6 @@ public class AdapterEdifici extends FirebaseRecyclerAdapter<Edificio, AdapterEdi
                 builder.setNegativeButton("Elimina", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
                         itemRef.removeValue();
                     }
                 });
@@ -89,6 +88,7 @@ public class AdapterEdifici extends FirebaseRecyclerAdapter<Edificio, AdapterEdi
         cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 Intent intent = new Intent(context.getApplicationContext(), PlanimetrieActivity.class);
                 intent.putExtra("key", chiave);
                 context.startActivity(intent);

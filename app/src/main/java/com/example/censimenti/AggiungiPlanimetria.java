@@ -1,6 +1,7 @@
 package com.example.censimenti;
 
 import static com.example.censimenti.AdapterPlanimetrie.refPlanimetrie;
+import static com.example.censimenti.AggiungiComune.storageC;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -22,12 +23,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.FileNotFoundException;
-import java.io.InputStream;
 
 public class AggiungiPlanimetria extends AppCompatActivity {
     TextInputEditText nomePlanimetria;
@@ -36,6 +34,7 @@ public class AggiungiPlanimetria extends AppCompatActivity {
 
     RelativeLayout scegliImmagine;
     ImageView imageView;
+
     Uri uri;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -110,14 +109,21 @@ public class AggiungiPlanimetria extends AppCompatActivity {
         imageView.setImageURI(uri);
     }
     private void addDataFirebase(Planimetria planimetria) throws FileNotFoundException {
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-        StorageReference storageReference = storage.getReference("planimetrie");
+//        FirebaseStorage storage = FirebaseStorage.getInstance();
+//        StorageReference storageReference = storage.getReference("planimetrie");
+
+
         String timestamp = Long.toString(System.currentTimeMillis());
-        StorageReference imageRef = storageReference.child(timestamp);
+//        StorageReference imageRef = storageReference.child(timestamp);
 
-        InputStream stream = getContentResolver().openInputStream(uri);
 
-        UploadTask uploadTask = imageRef.putStream(stream);
+
+//        InputStream stream = getContentResolver().openInputStream(uri);
+
+//        UploadTask uploadTask = storageP.putStream(stream);
+        UploadTask uploadTask = storageC.child(keyPlanimetria).putFile(uri);
+
+
         uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -131,7 +137,7 @@ public class AggiungiPlanimetria extends AppCompatActivity {
         refPlanimetrie.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Toast.makeText(AggiungiPlanimetria.this, "dati aggiunti", Toast.LENGTH_SHORT).show();
+                Toast.makeText(AggiungiPlanimetria.this, "Planimetria aggiunta con successo!", Toast.LENGTH_SHORT).show();
 
             }
 

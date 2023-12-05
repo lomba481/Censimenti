@@ -41,7 +41,9 @@ public class ComuniActivity extends AppCompatActivity {
 
         username = getIntent().getStringExtra("nomeCognome");
 
-        storageComuni = FirebaseStorage.getInstance().getReference("Comuni");
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+
+        storageComuni = storage.getReference("Comuni");
         refComuni = FirebaseDatabase.getInstance().getReference("Comuni");
         recyclerView = findViewById(R.id.comuneRecycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));

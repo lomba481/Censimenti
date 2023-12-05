@@ -1,5 +1,8 @@
 package com.example.censimenti;
 
+import static com.example.censimenti.AggiungiComune.storageC;
+import static com.example.censimenti.ComuniActivity.storageComuni;
+
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -119,6 +122,7 @@ public class AdapterComuni extends FirebaseRecyclerAdapter<Comune, AdapterComuni
             @Override
             public void onClick(View v) {
 //                Copiato da Seba
+                storageC = storageComuni.child(chiave);
                 Intent intent = new Intent(context.getApplicationContext(), EdificiActivity.class);
                 intent.putExtra("key", chiave);
                 context.startActivity(intent);

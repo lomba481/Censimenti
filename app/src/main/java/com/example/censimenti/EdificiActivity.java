@@ -2,7 +2,6 @@ package com.example.censimenti;
 
 import static com.example.censimenti.AdapterComuni.refComuni;
 import static com.example.censimenti.AdapterEdifici.refEdifici;
-import static com.example.censimenti.ComuniActivity.storageComuni;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,7 +21,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.StorageReference;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -35,7 +33,7 @@ import java.io.IOException;
 
 public class EdificiActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
-    static StorageReference storageEdifici;
+
     private AdapterEdifici adapterEdifici;
     FloatingActionButton addButton, esportaBtn;
     String keyCommessa, keyEdificio;
@@ -49,10 +47,8 @@ public class EdificiActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.edificiRecycler);
         keyCommessa = getIntent().getStringExtra("key");
         refEdifici = refComuni.child(keyCommessa).child("Edifici");
-        storageEdifici = storageComuni.child(keyCommessa).child("Edifici");
-//        eRef = FirebaseDatabase.getInstance().getReference("edificio");
 
-//         Query query = eRef.child(keyCommessa).orderByChild("key").equalTo(keyCommessa);
+
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setItemAnimator(null);
@@ -74,7 +70,6 @@ public class EdificiActivity extends AppCompatActivity {
                 Intent intent = new Intent(EdificiActivity.this, AggiungiEdificio.class);
 
                 keyEdificio = refEdifici.push().getKey();
-//                intent.putExtra("keyCommessa", keyCommessa);
                 intent.putExtra("keyEdificio", keyEdificio);
                 startActivity(intent);
             }
@@ -101,7 +96,7 @@ public class EdificiActivity extends AppCompatActivity {
             Sheet sheet1 = workbook.createSheet("Locali");
 
             Row headerRow = sheet.createRow(0);
-            headerRow.createCell(0).setCellValue("Comune");
+            headerRow.createCell(0).setCellValue("com/example/censimenti/Comune");
             headerRow.createCell(1).setCellValue("Edificio");
             headerRow.createCell(2).setCellValue("Piano");
             headerRow.createCell(3).setCellValue("Locale");
@@ -113,7 +108,7 @@ public class EdificiActivity extends AppCompatActivity {
             headerRow.createCell(9).setCellValue("Installazione");
 
             Row headerRow1 = sheet1.createRow(0);
-            headerRow1.createCell(0).setCellValue("Comune");
+            headerRow1.createCell(0).setCellValue("com/example/censimenti/Comune");
             headerRow1.createCell(1).setCellValue("Edificio");
             headerRow1.createCell(2).setCellValue("Piano");
             headerRow1.createCell(3).setCellValue("Locale");
@@ -187,7 +182,7 @@ public class EdificiActivity extends AppCompatActivity {
                         workbook.write(fileOutputStream);
                         fileOutputStream.close();
                         workbook.close();
-                        Toast.makeText(getApplicationContext(), "File Creato Con Successo", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "File Creato Con Successo!", Toast.LENGTH_SHORT).show();
                     } catch (IOException e) {
                         e.printStackTrace();
                         Toast.makeText(getApplicationContext(), "Creazione File Fallita", Toast.LENGTH_SHORT).show();

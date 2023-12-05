@@ -3,6 +3,7 @@ package com.example.censimenti;
 import static com.example.censimenti.AdapterEdifici.refEdifici;
 import static com.example.censimenti.AdapterPlanimetrie.refPlanimetrie;
 
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.storage.StorageReference;
 
 public class PlanimetrieActivity extends AppCompatActivity {
 
@@ -22,20 +24,19 @@ public class PlanimetrieActivity extends AppCompatActivity {
     FloatingActionButton addButton;
     String keyPlanimetria, keyEdificio ;
 
-//    static DatabaseReference pRef;
+    static StorageReference storagePlanimetrie;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.planimetrie);
-//        pRef = FirebaseDatabase.getInstance().getReference("planimetrie");
         recyclerView = findViewById(R.id.planimetrieRecycler);
         keyEdificio = getIntent().getStringExtra("key");
 
         refPlanimetrie = refEdifici.child(keyEdificio).child("Planimetrie");
 
+
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setItemAnimator(null);
-//        Query query = pRef.child(keyEdificio).orderByChild("key").equalTo(keyEdificio);
 
         FirebaseRecyclerOptions<Planimetria> options
                 = new FirebaseRecyclerOptions.Builder<Planimetria>()

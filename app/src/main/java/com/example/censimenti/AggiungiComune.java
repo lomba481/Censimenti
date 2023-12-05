@@ -21,6 +21,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,7 +37,7 @@ public class AggiungiComune extends AppCompatActivity {
     boolean[] selectUtente;
     ArrayList<Integer> utentiList = new ArrayList<>();
 
-    int k = 0;
+    static StorageReference storageC;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -150,7 +151,7 @@ public class AggiungiComune extends AppCompatActivity {
                 List<String>stringList = new ArrayList<>(Arrays.asList(strings));
 
                 refComuni.child(key).setValue(comune);
-                storageComuni.child(key);
+                storageC = storageComuni.child(key);
                 for (int i=0;i<stringList.size();i++){
                     refComuni.child(key).child("utenti").push().setValue(stringList.get(i));
                 }

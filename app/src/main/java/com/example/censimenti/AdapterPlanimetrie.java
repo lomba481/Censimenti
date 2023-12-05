@@ -1,5 +1,7 @@
 package com.example.censimenti;
 
+import static com.example.censimenti.PlanimetrieActivity.storagePlanimetrie;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -21,9 +23,10 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.StorageReference;
 
 public class AdapterPlanimetrie extends FirebaseRecyclerAdapter<Planimetria, AdapterPlanimetrie.planimetrieViewHolder> {
-     static DatabaseReference refPlanimetrie;
+    static DatabaseReference refPlanimetrie;
     CardView cardView;
     Context context;
     String imageUrl;
@@ -77,6 +80,16 @@ public class AdapterPlanimetrie extends FirebaseRecyclerAdapter<Planimetria, Ada
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
+                        storagePlanimetrie.child(chiave).listAll().addOnSuccessListener(listResult -> {
+                            for (StorageReference file : listResult.getItems()) {
+                                file.delete();
+                            }
+                        });
+                        storagePlanimetrie.child(chiave).child("Lampade/").listAll().addOnSuccessListener(listResult -> {
+                            for (StorageReference file : listResult.getItems()) {
+                                file.delete();
+                            }
+                        });
                         itemRef.removeValue();
                     }
                 });

@@ -1,6 +1,7 @@
 package com.example.censimenti;
 
 import static com.example.censimenti.AdapterPlanimetrie.refPlanimetrie;
+import static com.example.censimenti.AggiungiComune.storageC;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -60,7 +61,7 @@ public class CensimentiInterni extends AppCompatActivity {
     int larghezzaSchermo, altezzaSchermo, orientation;
     boolean isFABonLocale = false;
     boolean isFABonLampada = false;
-    int cont;
+
 
 
     @SuppressLint("ClickableViewAccessibility")
@@ -294,6 +295,7 @@ public class CensimentiInterni extends AppCompatActivity {
 
                     float Kx = dataSnapshot.child("kx").getValue(Float.class);
                     float Ky = dataSnapshot.child("ky").getValue(Float.class);
+                    float id = dataSnapshot.child("id").getValue(Long.class);
                     float x1 = larghezzaSchermo / Kx;
                     float y1 = altezzaSchermo / Ky;
 
@@ -306,6 +308,7 @@ public class CensimentiInterni extends AppCompatActivity {
                             public void onClick(DialogInterface dialog, int which) {
                                 refLampade.child(keyLampada).removeValue();
                                 relativeLayout.removeView(v);
+                                storageC.child(keyLampada).delete();
                                 Intent intent = new Intent(CensimentiInterni.this, CensimentiInterni.class);
                                 intent.putExtra("key", keyPlanimetria);
                                 intent.putExtra("imageUrl", imageUrl);

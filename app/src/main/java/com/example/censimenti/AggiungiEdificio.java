@@ -1,7 +1,6 @@
 package com.example.censimenti;
 
 import static com.example.censimenti.AdapterEdifici.refEdifici;
-import static com.example.censimenti.EdificiActivity.storageEdifici;
 
 import android.os.Bundle;
 import android.view.View;
@@ -22,7 +21,8 @@ public class AggiungiEdificio extends AppCompatActivity {
     TextInputEditText nomeEdificio, indirizzoEdificio;
 
     Button salva, indietro;
-    String keyCommessa, keyEdificio;
+    String  keyEdificio;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -64,12 +64,12 @@ public class AggiungiEdificio extends AppCompatActivity {
                 edificio.setNome(nome);
                 edificio.setIndirizzo(indirizzo);
                 refEdifici.child(keyEdificio).setValue(edificio);
-                storageEdifici.child(keyEdificio);
 
-                refEdifici.addValueEventListener(new ValueEventListener() {
+
+                refEdifici.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        Toast.makeText(AggiungiEdificio.this, "dati aggiunti", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AggiungiEdificio.this, "Edificio aggiunto con successo!", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override

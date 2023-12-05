@@ -1,6 +1,7 @@
 package com.example.censimenti;
 
 import static com.example.censimenti.AdapterPlanimetrie.refPlanimetrie;
+import static com.example.censimenti.AggiungiComune.storageC;
 import static com.example.censimenti.CensimentiInterni.refLampade;
 import static com.example.censimenti.CensimentiInterni.refLocale;
 
@@ -32,12 +33,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.util.ArrayList;
 
 public class AggiungiLampade extends AppCompatActivity {
@@ -50,6 +48,7 @@ public class AggiungiLampade extends AppCompatActivity {
     ImageView imageView;
     float x, y;
     Long cont;
+
 
     Uri uri = null;
 
@@ -209,7 +208,7 @@ public class AggiungiLampade extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 ImagePicker.with(AggiungiLampade.this)
-                        .cameraOnly()
+                        .cameraOnly().maxResultSize(750,750)
                         .start();
             }
         });
@@ -324,14 +323,16 @@ public class AggiungiLampade extends AppCompatActivity {
     }
 
     private void addDataFirebase(Lampada lampada) throws FileNotFoundException {
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-        StorageReference storageReference = storage.getReference("Lampade");
+//        FirebaseStorage storage = FirebaseStorage.getInstance();
+//        StorageReference storageReference = storage.getReference("Lampade");
         String timestamp = Long.toString(System.currentTimeMillis());
-        StorageReference imageRef = storageReference.child(timestamp);
+//        StorageReference imageRef = storageReference.child(timestamp);
+//        storageL = storageLampade.child(keyLampada).child("LAMPADA-"+timestamp);
 
-        InputStream stream = getContentResolver().openInputStream(uri);
 
-        UploadTask uploadTask = imageRef.putStream(stream);
+//        InputStream stream = getContentResolver().openInputStream(uri);
+
+        UploadTask uploadTask = storageC.child(keyLampada).putFile(uri);
         uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
