@@ -8,6 +8,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.StorageReference;
 
 public class AdapterComuni extends FirebaseRecyclerAdapter<Comune, AdapterComuni.comuniviewHolder> {
     static DatabaseReference refComuni;
@@ -50,9 +52,11 @@ public class AdapterComuni extends FirebaseRecyclerAdapter<Comune, AdapterComuni
         holder.nome.setText(model.getNome());
         holder.nCommessa.setText(model.getnCommessa());
 
+
 //        refComuni = FirebaseDatabase.getInstance().getReference("comune");
         DatabaseReference itemRef = getRef(holder.getAbsoluteAdapterPosition());
         String chiave = itemRef.getKey();
+        Log.d("lklk1", chiave);
 
         puntini.setOnClickListener(new View.OnClickListener() {
 
@@ -65,11 +69,12 @@ public class AdapterComuni extends FirebaseRecyclerAdapter<Comune, AdapterComuni
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
-                        refComuni.addValueEventListener(new ValueEventListener() {
+                        refComuni.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                                     String chiave1 = dataSnapshot.getKey();
+                                    Log.d("lklk", chiave);
                                     if (chiave == chiave1) {
                                         Intent intent = new Intent(context.getApplicationContext(), AggiungiComune.class);
                                         intent.putExtra("key", chiave);
@@ -92,6 +97,11 @@ public class AdapterComuni extends FirebaseRecyclerAdapter<Comune, AdapterComuni
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         itemRef.removeValue();
+                        storageC.child(chiave).listAll().addOnSuccessListener(listResult -> {
+                            for(StorageReference item : listResult.getItems()) {
+                                item.delete();
+                            }
+                        });
                         refComuni.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -121,6 +131,7 @@ public class AdapterComuni extends FirebaseRecyclerAdapter<Comune, AdapterComuni
         cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d("posi2222", "" + holder.getAbsoluteAdapterPosition());
 //                Copiato da Seba
                 storageC = storageComuni.child(chiave);
                 Intent intent = new Intent(context.getApplicationContext(), EdificiActivity.class);

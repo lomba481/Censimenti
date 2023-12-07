@@ -22,7 +22,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -50,8 +49,6 @@ public class CensimentiInterni extends AppCompatActivity {
     com.getbase.floatingactionbutton.FloatingActionButton  lampadaFAB, localeFAB;
     TextView textView;
     ImageView localeImage;
-    @SuppressLint("UseSwitchCompatOrMaterialCode")
-    Switch switchBtn;
 
     static DatabaseReference refLampade, refLocale;
 
@@ -61,6 +58,7 @@ public class CensimentiInterni extends AppCompatActivity {
     int larghezzaSchermo, altezzaSchermo, orientation;
     boolean isFABonLocale = false;
     boolean isFABonLampada = false;
+    String locale, tipo, nome, potenza, sorgente, attacco, installazione;
 
 
 
@@ -80,7 +78,6 @@ public class CensimentiInterni extends AppCompatActivity {
         altezzaSchermo = size.y;
 
         relativeLayout = findViewById(R.id.relativeLayout);
-        switchBtn = findViewById(R.id.switchBtn);
         indietroBtn = findViewById(R.id.indietroBtn);
         lampadaFAB = findViewById(R.id.lampadaFAB);
         localeFAB = findViewById(R.id.localeFAB);
@@ -142,7 +139,16 @@ public class CensimentiInterni extends AppCompatActivity {
                     intent.putExtra("y", y);
                     intent.putExtra("keyLampada", keyLampada);
                     intent.putExtra("keyPlanimetria", keyPlanimetria);
-                    startActivity(intent);
+                    intent.putExtra("locale", locale);
+                    intent.putExtra("installazione", installazione);
+                    intent.putExtra("potenza", potenza);
+                    intent.putExtra("attacco", attacco);
+                    intent.putExtra("nome", nome);
+                    intent.putExtra("sorgente", sorgente);
+                    intent.putExtra("tipo", tipo);
+                    Log.d("ricevuto2", ""+potenza);
+
+                    startActivityForResult(intent, 1);
                 }
                 else if (isFABonLocale && !isFABonLampada) {
                     Log.d("stato99", "loc");
@@ -185,6 +191,22 @@ public class CensimentiInterni extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 1 && resultCode == RESULT_OK && data != null) {
+            locale = data.getStringExtra("locale");
+            nome = data.getStringExtra("nome");
+            sorgente = data.getStringExtra("sorgente");
+            installazione = data.getStringExtra("installazione");
+            attacco = data.getStringExtra("attacco");
+            tipo = data.getStringExtra("tipo");
+            potenza = data.getStringExtra("potenza");
+            Log.d("ricevuto", ""+potenza);
+
+        }
     }
 
     private void updateFABcolorLocale(FloatingActionButton fab) {

@@ -8,6 +8,8 @@ import static com.example.censimenti.CensimentiInterni.refLocale;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.Icon;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,6 +28,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputEditText;
@@ -44,12 +49,15 @@ public class AggiungiLampade extends AppCompatActivity {
     AutoCompleteTextView nomeLampada, tipoLampada, installazioneLampada, localeLampada;
     Button salva, indietro;
     String keyLampada, keyPlanimetria;
+    String url = null;
     RelativeLayout scegliImmagine;
     ImageView imageView;
     float x, y;
     Long cont;
+    String locale, tipo, nome, potenza, sorgente, attacco, installazione;
 
 
+    ImageView refresh, fotoLamp;
     Uri uri = null;
 
 
@@ -74,8 +82,61 @@ public class AggiungiLampade extends AppCompatActivity {
         sorgenteLampada = findViewById(R.id.sorgenteLampada);
         attaccoLampada = findViewById(R.id.attaccoLampada);
         installazioneLampada = findViewById(R.id.installazioneLampada);
+        refresh = findViewById(R.id.refreshLampade);
+        fotoLamp = findViewById(R.id.ImageView);
+
+
         keyLampada = getIntent().getStringExtra("keyLampada");
         keyPlanimetria = getIntent().getStringExtra("keyPlanimetria");
+        locale = getIntent().getStringExtra("locale");
+        nome = getIntent().getStringExtra("nome");
+        sorgente = getIntent().getStringExtra("sorgente");
+        installazione = getIntent().getStringExtra("installazione");
+        attacco = getIntent().getStringExtra("attacco");
+        tipo = getIntent().getStringExtra("tipo");
+        potenza = getIntent().getStringExtra("potenza");
+        Log.d("ricevuto1", ""+potenza);
+
+        localeLampada.setText(locale);
+        tipoLampada.setText(tipo);
+        nomeLampada.setText(nome);
+        potenzaLampada.setText(potenza);
+        sorgenteLampada.setText(sorgente);
+        attaccoLampada.setText(attacco);
+        installazioneLampada.setText(installazione);
+
+        fotoLamp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (uri != null) {
+                    Intent intent = new Intent(AggiungiLampade.this, VisualizzaFoto.class);
+                    intent.setData(uri);
+                    startActivity(intent);
+                }
+                else if (url != null) {
+                    Intent intent = new Intent(AggiungiLampade.this, VisualizzaFoto.class);
+                    intent.putExtra("url", url);
+                    startActivity(intent);
+                }
+            }
+        });
+
+
+        refresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                localeLampada.setText("");
+                tipoLampada.setText("");
+                nomeLampada.setText("");
+                potenzaLampada.setText("");
+                sorgenteLampada.setText("");
+                attaccoLampada.setText("");
+                installazioneLampada.setText("");
+            }
+        });
+
+
+
 
 
         x = getIntent().getFloatExtra("x", 0);
@@ -186,6 +247,7 @@ public class AggiungiLampade extends AppCompatActivity {
                     String potenza = snapshot.child("potenza").getValue(String.class);
                     String nome = snapshot.child("nome").getValue(String.class);
                     String installazione = snapshot.child ("installazione").getValue(String.class);
+                    url = snapshot.child("foto").getValue(String.class);
 
                     localeLampada.setText(locale);
                     tipoLampada.setText(tipo);
@@ -194,6 +256,17 @@ public class AggiungiLampade extends AppCompatActivity {
                     sorgenteLampada.setText(sorgente);
                     attaccoLampada.setText(attacco);
                     installazioneLampada.setText(installazione);
+
+                    if(url != null){
+                        loadUrlAsDrawable(url, getApplicationContext(), new Icon.OnDrawableLoadedListener() {
+                            @Override
+                            public void onDrawableLoaded(Drawable d) {
+                                imageView.setImageDrawable(d);
+                            }
+                        });
+
+                    }
+
 
                 }
             }
@@ -262,6 +335,15 @@ public class AggiungiLampade extends AppCompatActivity {
                                 } else {
                                     addDataFirebase(lampada);
                                 }
+                                Intent resultIntent = new Intent();
+                                resultIntent.putExtra("sorgente", lampada.getSorgente());
+                                resultIntent.putExtra("tipo", lampada.getTipo());
+                                resultIntent.putExtra("attacco", lampada.getAttacco());
+                                resultIntent.putExtra("installazione", lampada.getInstallazione());
+                                resultIntent.putExtra("locale", lampada.getLocale());
+                                resultIntent.putExtra("nome", lampada.getNome());
+                                resultIntent.putExtra("potenza", lampada.getPotenza());
+                                setResult(RESULT_OK, resultIntent);
                                 finish();
                             } catch (FileNotFoundException e) {
                                 throw new RuntimeException(e);
@@ -543,6 +625,22 @@ public class AggiungiLampade extends AppCompatActivity {
             }
         });
 
+    }
+
+    public void loadUrlAsDrawable(String url, Context context, final Icon.OnDrawableLoadedListener listener) {
+        Glide.with(context)
+                .load(url)
+                .into(new CustomTarget<Drawable>() {
+                    @Override
+                    public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                        listener.onDrawableLoaded(resource);
+                    }
+
+                    @Override
+                    public void onLoadCleared(@Nullable Drawable placeholder) {
+
+                    }
+                });
     }
 
 

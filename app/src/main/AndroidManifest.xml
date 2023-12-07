@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"
+        tools:ignore="CoarseFineLocation" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+
+
 
 
 
@@ -13,6 +20,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Censimenti"
+        android:requestLegacyExternalStorage="true"
         tools:targetApi="31">
 
         <activity
@@ -35,6 +43,7 @@
         <activity android:name=".CensimentiInterni" />
         <activity android:name=".Utenti.UtentiActivity" />
         <activity android:name=".AggiungiLocale" />
+        <activity android:name=".VisualizzaFoto" />
 
     </application>
 

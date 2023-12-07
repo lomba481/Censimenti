@@ -7,6 +7,7 @@ import static com.example.censimenti.AdapterPlanimetrie.refPlanimetrie;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,6 +26,7 @@ public class PlanimetrieActivity extends AppCompatActivity {
     String keyPlanimetria, keyEdificio ;
 
     static StorageReference storagePlanimetrie;
+    ImageView refresh;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +48,17 @@ public class PlanimetrieActivity extends AppCompatActivity {
         adapterPlanimetrie = new AdapterPlanimetrie(options);
         recyclerView.setAdapter(adapterPlanimetrie);
 
+        refresh = findViewById(R.id.refreshPlanimetrie);
+        refresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(PlanimetrieActivity.this, PlanimetrieActivity.class);
+                intent.putExtra("key", keyEdificio);
+                startActivity(intent);
+                finish();
+            }
+        });
+
         addButton = findViewById(R.id.addingBtn);
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,6 +70,18 @@ public class PlanimetrieActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        FirebaseRecyclerOptions<Planimetria> options
+                = new FirebaseRecyclerOptions.Builder<Planimetria>()
+                .setQuery(refPlanimetrie, Planimetria.class)
+                .build();
+
+        adapterPlanimetrie = new AdapterPlanimetrie(options);
+        recyclerView.setAdapter(adapterPlanimetrie);
     }
 
     @Override

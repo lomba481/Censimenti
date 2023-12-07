@@ -52,7 +52,7 @@ public class AdapterEdifici extends FirebaseRecyclerAdapter<Edificio, AdapterEdi
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
-                        refEdifici.addValueEventListener(new ValueEventListener() {
+                        refEdifici.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
