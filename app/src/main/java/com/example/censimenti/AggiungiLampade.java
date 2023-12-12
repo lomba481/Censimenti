@@ -22,6 +22,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -36,7 +37,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.UploadTask;
 
@@ -52,9 +52,11 @@ public class AggiungiLampade extends AppCompatActivity {
     String url = null;
     RelativeLayout scegliImmagine;
     ImageView imageView;
+    TextView textView;
     float x, y;
     Long cont;
-    String locale, tipo, nome, potenza, sorgente, attacco, installazione;
+    String locale, tipo, nome, potenza, sorgente, attacco, installazione, modifica;
+    Long id;
 
 
     ImageView refresh, fotoLamp;
@@ -84,6 +86,8 @@ public class AggiungiLampade extends AppCompatActivity {
         installazioneLampada = findViewById(R.id.installazioneLampada);
         refresh = findViewById(R.id.refreshLampade);
         fotoLamp = findViewById(R.id.ImageView);
+        textView = findViewById(R.id.textLampada);
+
 
 
         keyLampada = getIntent().getStringExtra("keyLampada");
@@ -95,7 +99,14 @@ public class AggiungiLampade extends AppCompatActivity {
         attacco = getIntent().getStringExtra("attacco");
         tipo = getIntent().getStringExtra("tipo");
         potenza = getIntent().getStringExtra("potenza");
-        Log.d("ricevuto1", ""+potenza);
+        modifica = getIntent().getStringExtra("modifica");
+        if (modifica == null) {
+            textView.setText("Aggiungi Lampada");
+        }
+        else {
+            textView.setText("Modifica Lampada");
+        }
+
 
         localeLampada.setText(locale);
         tipoLampada.setText(tipo);
@@ -235,8 +246,7 @@ public class AggiungiLampade extends AppCompatActivity {
 
         controlloAttributi();
 
-        DatabaseReference lref2 = refLampade.child(keyLampada);
-        lref2.addValueEventListener(new ValueEventListener() {
+        refLampade.child(keyLampada).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
@@ -246,6 +256,7 @@ public class AggiungiLampade extends AppCompatActivity {
                     String attacco = snapshot.child("attacco").getValue(String.class);
                     String potenza = snapshot.child("potenza").getValue(String.class);
                     String nome = snapshot.child("nome").getValue(String.class);
+                    id = snapshot.child("id").getValue(Long.class);
                     String installazione = snapshot.child ("installazione").getValue(String.class);
                     url = snapshot.child("foto").getValue(String.class);
 
@@ -300,12 +311,19 @@ public class AggiungiLampade extends AppCompatActivity {
                     refPlanimetrie.child(keyPlanimetria).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            cont = snapshot.child("conteggio").getValue(Long.class);
-                            Log.d("conteggio1", "" + cont);
-                            cont = cont + 1;
-                            Log.d("conteggio2", "" + cont);
-                            refPlanimetrie.child(keyPlanimetria).child("conteggio").setValue(cont);
-                            Log.d("conteggio3", "" + cont);
+
+                            if (modifica == null){
+
+                                cont = snapshot.child("conteggio").getValue(Long.class);
+                                cont = cont + 1;
+                                refPlanimetrie.child(keyPlanimetria).child("conteggio").setValue(cont);
+
+                            } else {
+                                cont = id;
+                            }
+
+
+
                             Lampada lampada = new Lampada(localeLampada.getText().toString(),
                                     tipoLampada.getText().toString(),
                                     nomeLampada.getText().toString(),
@@ -313,9 +331,7 @@ public class AggiungiLampade extends AppCompatActivity {
                                     sorgenteLampada.getText().toString(),
                                     attaccoLampada.getText().toString(),
                                     installazioneLampada.getText().toString(),
-                                    "",
-                                    x, y, Kx, Ky, cont);
-
+                                    url, x, y, Kx, Ky, cont);
 
                             try {
                                 if (uri == null) {
@@ -405,14 +421,6 @@ public class AggiungiLampade extends AppCompatActivity {
     }
 
     private void addDataFirebase(Lampada lampada) throws FileNotFoundException {
-//        FirebaseStorage storage = FirebaseStorage.getInstance();
-//        StorageReference storageReference = storage.getReference("Lampade");
-        String timestamp = Long.toString(System.currentTimeMillis());
-//        StorageReference imageRef = storageReference.child(timestamp);
-//        storageL = storageLampade.child(keyLampada).child("LAMPADA-"+timestamp);
-
-
-//        InputStream stream = getContentResolver().openInputStream(uri);
 
         UploadTask uploadTask = storageC.child(keyLampada).putFile(uri);
         uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {

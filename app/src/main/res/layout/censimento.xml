@@ -11,34 +11,21 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
+        <com.getbase.floatingactionbutton.FloatingActionButton
             android:id="@+id/indietroBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
             android:layout_marginTop="15dp"
             android:rotationY="180"
-            android:src="@drawable/baseline_arrow_forward_24"
-            app:backgroundTint="@color/blue_restart"
+            app:fab_icon="@drawable/baseline_arrow_forward_24"
             app:maxImageSize="30dp"
-            app:tint="@color/white"
+            app:fab_colorNormal="@color/orange_restart"
+            app:fab_colorPressed="@color/white"
             tools:ignore="SpeakableTextPresentCheck">
 
-        </com.google.android.material.floatingactionbutton.FloatingActionButton>
+        </com.getbase.floatingactionbutton.FloatingActionButton>
 
-<!--        <Switch-->
-<!--            android:id="@+id/switchBtn"-->
-<!--            android:layout_width="55dp"-->
-<!--            android:layout_height="55dp"-->
-<!--            android:layout_alignParentEnd="true"-->
-<!--            android:layout_marginTop="15dp"-->
-<!--            android:layout_marginEnd="10dp"-->
-<!--            android:checked="false"-->
-<!--            android:padding="2dp"-->
-<!--            android:thumb="@drawable/baseline_brightness_1_24"-->
-<!--            android:track="@drawable/track_switch"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            tools:ignore="MissingConstraints,UseSwitchCompatOrMaterialXml" />-->
 
 
         <com.getbase.floatingactionbutton.FloatingActionsMenu

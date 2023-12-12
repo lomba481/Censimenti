@@ -137,6 +137,7 @@ public class EdificiActivity extends AppCompatActivity {
             headerRow1.createCell(2).setCellValue("Piano");
             headerRow1.createCell(3).setCellValue("Locale");
             headerRow1.createCell(4).setCellValue("Note");
+            headerRow1.createCell(5).setCellValue("Foto");
 
             refComuni.addListenerForSingleValueEvent(new ValueEventListener() {
                 @RequiresApi(api = Build.VERSION_CODES.R)
@@ -177,7 +178,7 @@ public class EdificiActivity extends AppCompatActivity {
                                         row.createCell(8).setCellValue(sorgente);
                                         row.createCell(9).setCellValue(attacco);
                                         row.createCell(10).setCellValue(installazione);
-                                        row.createCell(11).setCellValue(foto);
+//                                        row.createCell(11).setCellValue(foto);
                                         Cell cell = row.createCell(11);
                                         cell.setCellValue(foto);
                                         CreationHelper createHelper = workbook.getCreationHelper();
@@ -202,6 +203,7 @@ public class EdificiActivity extends AppCompatActivity {
                                     for (DataSnapshot localeSnapshot : planimetriaSnapshot.child("Locali").getChildren()) {
                                         String locale = localeSnapshot.child("nome").getValue(String.class);
                                         String note = localeSnapshot.child("note").getValue(String.class);
+                                        String foto = localeSnapshot.child("foto").getValue(String.class);
 
 
                                         Row row1 = sheet1.createRow(sheet1.getLastRowNum()+1);
@@ -210,6 +212,8 @@ public class EdificiActivity extends AppCompatActivity {
                                         row1.createCell(2).setCellValue(nomePlanimetria);
                                         row1.createCell(3).setCellValue(locale);
                                         row1.createCell(4).setCellValue(note);
+                                        row1.createCell(5).setCellValue(foto);
+
                                     }
                                 }
                             }

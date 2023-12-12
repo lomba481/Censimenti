@@ -109,20 +109,8 @@ public class AggiungiPlanimetria extends AppCompatActivity {
         imageView.setImageURI(uri);
     }
     private void addDataFirebase(Planimetria planimetria) throws FileNotFoundException {
-//        FirebaseStorage storage = FirebaseStorage.getInstance();
-//        StorageReference storageReference = storage.getReference("planimetrie");
 
-
-        String timestamp = Long.toString(System.currentTimeMillis());
-//        StorageReference imageRef = storageReference.child(timestamp);
-
-
-
-//        InputStream stream = getContentResolver().openInputStream(uri);
-
-//        UploadTask uploadTask = storageP.putStream(stream);
         UploadTask uploadTask = storageC.child(keyPlanimetria).putFile(uri);
-
 
         uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override

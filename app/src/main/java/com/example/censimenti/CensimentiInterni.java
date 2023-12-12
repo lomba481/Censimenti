@@ -44,9 +44,9 @@ public class CensimentiInterni extends AppCompatActivity {
 
     RelativeLayout relativeLayout;
     CircleImageView circleImageView;
-    com.google.android.material.floatingactionbutton.FloatingActionButton indietroBtn;
 
-    com.getbase.floatingactionbutton.FloatingActionButton  lampadaFAB, localeFAB;
+
+    com.getbase.floatingactionbutton.FloatingActionButton  lampadaFAB, localeFAB, indietroBtn;
     TextView textView;
     ImageView localeImage;
 
@@ -96,14 +96,9 @@ public class CensimentiInterni extends AppCompatActivity {
 
             }
         });
-        indietroBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
 
-       recuperaDati();
+
+//       recuperaDati();
 
        lampadaFAB.setOnClickListener(new View.OnClickListener() {
            @SuppressLint("ClickableViewAccessibility")
@@ -171,7 +166,7 @@ public class CensimentiInterni extends AppCompatActivity {
                             child.setOnLongClickListener(new View.OnLongClickListener() {
                                 @Override
                                 public boolean onLongClick(View v) {
-                                    handleImageLongClick((CircleImageView) v);
+                                    LampadaLongClick((CircleImageView) v);
                                     return true;
                                 }
                             });
@@ -179,8 +174,24 @@ public class CensimentiInterni extends AppCompatActivity {
                             child.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    handleImageClick(v);
+                                    LampadaClick(v);
 
+                                }
+                            });
+
+                        } else if (child instanceof ImageView){
+                            child.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    LocaleClick(v);
+                                }
+                            });
+
+                            child.setOnLongClickListener(new View.OnLongClickListener() {
+                                @Override
+                                public boolean onLongClick(View v) {
+                                    LocaleLongClick(v);
+                                    return true;
                                 }
                             });
 
@@ -192,7 +203,87 @@ public class CensimentiInterni extends AppCompatActivity {
         });
 
     }
+    private void LocaleClick(View v){
+        Intent intent = new Intent(CensimentiInterni.this, AggiungiLocale.class);
 
+        refLocale.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+
+                    float Kx = dataSnapshot.child("kx").getValue(Float.class);
+                    float Ky = dataSnapshot.child("ky").getValue(Float.class);
+                    float x1 = larghezzaSchermo / Kx;
+                    float y1 = altezzaSchermo / Ky;
+
+                    if (v.getX() == x1 && v.getY() == y1) {
+                        keyLocale = dataSnapshot.getKey();
+
+                        intent.putExtra("x", x1);
+                        intent.putExtra("y", y1);
+                        intent.putExtra("keyLocale", keyLocale);
+                        intent.putExtra("modifica", "si");
+
+                        startActivity(intent);
+
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void LocaleLongClick(View v){
+        refLocale.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+
+                    float Kx = dataSnapshot.child("kx").getValue(Float.class);
+                    float Ky = dataSnapshot.child("ky").getValue(Float.class);
+                    float x1 = larghezzaSchermo / Kx;
+                    float y1 = altezzaSchermo / Ky;
+
+                    if (v.getX() == x1 && v.getY() == y1) {
+                        keyLocale = dataSnapshot.getKey();
+                        AlertDialog.Builder builder = new AlertDialog.Builder(CensimentiInterni.this);
+                        builder.setMessage("Sei sicuro di voler eliminare?");
+                        builder.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                refLocale.child(keyLocale).removeValue();
+                                relativeLayout.removeView(v);
+                                storageC.child(keyLocale).delete();
+                                Intent intent = new Intent(CensimentiInterni.this, CensimentiInterni.class);
+                                intent.putExtra("key", keyPlanimetria);
+                                intent.putExtra("imageUrl", imageUrl);
+                                startActivity(intent);
+                                finish();
+                            }
+                        });
+                        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+
+            }
+        });
+    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -272,7 +363,7 @@ public class CensimentiInterni extends AppCompatActivity {
         keyLampada = refLampade.push().getKey();
     }
 
-    private void handleImageClick(View v) {
+    private void LampadaClick(View v) {
 
         Intent intent = new Intent(CensimentiInterni.this, AggiungiLampade.class);
 
@@ -293,6 +384,8 @@ public class CensimentiInterni extends AppCompatActivity {
                         intent.putExtra("y", y1);
                         intent.putExtra("keyLampada", keyLampada);
                         intent.putExtra("keyPlanimetria", keyPlanimetria);
+                        intent.putExtra("modifica", "si");
+
                         startActivity(intent);
 
                     }
@@ -308,7 +401,7 @@ public class CensimentiInterni extends AppCompatActivity {
 
     }
 
-    private void handleImageLongClick(CircleImageView v) {
+    private void LampadaLongClick(CircleImageView v) {
 
         refLampade.addValueEventListener(new ValueEventListener() {
             @Override
@@ -317,7 +410,6 @@ public class CensimentiInterni extends AppCompatActivity {
 
                     float Kx = dataSnapshot.child("kx").getValue(Float.class);
                     float Ky = dataSnapshot.child("ky").getValue(Float.class);
-                    float id = dataSnapshot.child("id").getValue(Long.class);
                     float x1 = larghezzaSchermo / Kx;
                     float y1 = altezzaSchermo / Ky;
 
@@ -469,13 +561,10 @@ public class CensimentiInterni extends AppCompatActivity {
 
                     RelativeLayout.LayoutParams params;
                     int width1, height1;
-                    float dpx, dpy;
                     if (orientation == Configuration.ORIENTATION_PORTRAIT) {
                         width1 = larghezzaSchermo/40;
                         height1 = altezzaSchermo/64;
                         params = new RelativeLayout.LayoutParams(width1, height1);
-                        dpx = larghezzaSchermo/10;
-                        dpy = altezzaSchermo/19;
 
 
                     }
@@ -483,8 +572,6 @@ public class CensimentiInterni extends AppCompatActivity {
                         width1 = larghezzaSchermo/64;
                         height1 = altezzaSchermo/40;
                         params = new RelativeLayout.LayoutParams(width1, height1);
-                        dpx = larghezzaSchermo/19;
-                        dpy = altezzaSchermo/10;
 
                     }
 
@@ -499,7 +586,7 @@ public class CensimentiInterni extends AppCompatActivity {
 
 
                     textView.setX(x);
-                    textView.setY(y-20);
+                    textView.setY(y-30);
                     textView.setText(id.toString());
 
                     textView.setWidth(width1);
@@ -512,6 +599,18 @@ public class CensimentiInterni extends AppCompatActivity {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
+            }
+        });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        recuperaDati();
+        indietroBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
             }
         });
     }
