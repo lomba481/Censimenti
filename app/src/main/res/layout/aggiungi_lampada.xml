@@ -240,6 +240,15 @@
                     android:gravity="right"
                     android:orientation="horizontal">
 
+                    <com.google.android.material.progressindicator.CircularProgressIndicator
+                        android:id="@+id/progressIndicatorLamp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:indeterminate="true"
+                        android:layout_marginHorizontal="12dp"
+                        android:visibility="invisible"
+                        android:progressTint="@color/orange_restart" />
+
                     <Button
                         android:id="@+id/saveBtn"
                         android:layout_width="wrap_content"

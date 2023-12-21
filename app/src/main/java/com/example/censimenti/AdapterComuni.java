@@ -8,7 +8,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,7 +55,6 @@ public class AdapterComuni extends FirebaseRecyclerAdapter<Comune, AdapterComuni
 //        refComuni = FirebaseDatabase.getInstance().getReference("comune");
         DatabaseReference itemRef = getRef(holder.getAbsoluteAdapterPosition());
         String chiave = itemRef.getKey();
-        Log.d("lklk1", chiave);
 
         puntini.setOnClickListener(new View.OnClickListener() {
 
@@ -74,10 +72,11 @@ public class AdapterComuni extends FirebaseRecyclerAdapter<Comune, AdapterComuni
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                                     String chiave1 = dataSnapshot.getKey();
-                                    Log.d("lklk", chiave);
+
                                     if (chiave == chiave1) {
                                         Intent intent = new Intent(context.getApplicationContext(), AggiungiComune.class);
                                         intent.putExtra("key", chiave);
+                                        intent.putExtra("modifica", "si");
                                         context.startActivity(intent);
                                     }
                                 }
@@ -106,12 +105,6 @@ public class AdapterComuni extends FirebaseRecyclerAdapter<Comune, AdapterComuni
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 Toast.makeText(context.getApplicationContext(), "Eliminato con successo", Toast.LENGTH_SHORT).show();
-//                                LayoutInflater inflater = LayoutInflater.from(context.getApplicationContext());
-//                                View layout = inflater.inflate(R.layout.custom_toast, null);
-//                                Toast toast = new Toast(context.getApplicationContext());
-//                                toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-//                                toast.setView(layout);
-//                                toast.show();
                             }
 
                             @Override
@@ -131,7 +124,7 @@ public class AdapterComuni extends FirebaseRecyclerAdapter<Comune, AdapterComuni
         cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("posi2222", "" + holder.getAbsoluteAdapterPosition());
+
 //                Copiato da Seba
                 storageC = storageComuni.child(chiave);
                 Intent intent = new Intent(context.getApplicationContext(), EdificiActivity.class);

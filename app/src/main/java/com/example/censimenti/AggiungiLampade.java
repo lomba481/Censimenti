@@ -12,7 +12,6 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.Icon;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
@@ -34,6 +33,7 @@ import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -53,6 +53,7 @@ public class AggiungiLampade extends AppCompatActivity {
     RelativeLayout scegliImmagine;
     ImageView imageView;
     TextView textView;
+    CircularProgressIndicator progressIndicator;
     float x, y;
     Long cont;
     String locale, tipo, nome, potenza, sorgente, attacco, installazione, modifica;
@@ -87,7 +88,7 @@ public class AggiungiLampade extends AppCompatActivity {
         refresh = findViewById(R.id.refreshLampade);
         fotoLamp = findViewById(R.id.ImageView);
         textView = findViewById(R.id.textLampada);
-
+        progressIndicator = findViewById(R.id.progressIndicatorLamp);
 
 
         keyLampada = getIntent().getStringExtra("keyLampada");
@@ -303,10 +304,12 @@ public class AggiungiLampade extends AppCompatActivity {
             public void onClick(View v) {
 
 
+
                 if (installazioneLampada.getText().toString().equals("")) {
                     Toast.makeText(AggiungiLampade.this, "Devi compilare il campo \"Installazione\"", Toast.LENGTH_SHORT).show();
 
                 } else {
+                    progressIndicator.setVisibility(View.VISIBLE);
                     // recupero i dati per poi eseguire salvataggio in firebase
                     refPlanimetrie.child(keyPlanimetria).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
@@ -335,12 +338,23 @@ public class AggiungiLampade extends AppCompatActivity {
 
                             try {
                                 if (uri == null) {
-                                    lampada.setFoto("");
+
                                     refLampade.child(keyLampada).setValue(lampada);
                                     refLampade.addListenerForSingleValueEvent(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                                             Toast.makeText(AggiungiLampade.this, "Lampada aggiunta con successo", Toast.LENGTH_SHORT).show();
+
+                                            Intent resultIntent = new Intent();
+                                            resultIntent.putExtra("sorgente", lampada.getSorgente());
+                                            resultIntent.putExtra("tipo", lampada.getTipo());
+                                            resultIntent.putExtra("attacco", lampada.getAttacco());
+                                            resultIntent.putExtra("installazione", lampada.getInstallazione());
+                                            resultIntent.putExtra("locale", lampada.getLocale());
+                                            resultIntent.putExtra("nome", lampada.getNome());
+                                            resultIntent.putExtra("potenza", lampada.getPotenza());
+                                            setResult(RESULT_OK, resultIntent);
+                                            finish();
                                         }
 
                                         @Override
@@ -351,16 +365,6 @@ public class AggiungiLampade extends AppCompatActivity {
                                 } else {
                                     addDataFirebase(lampada);
                                 }
-                                Intent resultIntent = new Intent();
-                                resultIntent.putExtra("sorgente", lampada.getSorgente());
-                                resultIntent.putExtra("tipo", lampada.getTipo());
-                                resultIntent.putExtra("attacco", lampada.getAttacco());
-                                resultIntent.putExtra("installazione", lampada.getInstallazione());
-                                resultIntent.putExtra("locale", lampada.getLocale());
-                                resultIntent.putExtra("nome", lampada.getNome());
-                                resultIntent.putExtra("potenza", lampada.getPotenza());
-                                setResult(RESULT_OK, resultIntent);
-                                finish();
                             } catch (FileNotFoundException e) {
                                 throw new RuntimeException(e);
                             }
@@ -398,7 +402,7 @@ public class AggiungiLampade extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     String nome = dataSnapshot.child("nome").getValue(String.class);
-                    Log.d("locale", nome);
+
                     listaLocali.add(nome);
                 }
                 autoCompleteMenu(listaLocali.toArray(new String[0]), localeLampada);
@@ -430,22 +434,34 @@ public class AggiungiLampade extends AppCompatActivity {
                     String imageUrl = downloadUri.toString();
                     lampada.setFoto(imageUrl);
                     refLampade.child(keyLampada).setValue(lampada);
+                    refLampade.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            Toast.makeText(AggiungiLampade.this, "Lampada aggiunta con successo", Toast.LENGTH_SHORT).show();
+
+                            Intent resultIntent = new Intent();
+                            resultIntent.putExtra("sorgente", lampada.getSorgente());
+                            resultIntent.putExtra("tipo", lampada.getTipo());
+                            resultIntent.putExtra("attacco", lampada.getAttacco());
+                            resultIntent.putExtra("installazione", lampada.getInstallazione());
+                            resultIntent.putExtra("locale", lampada.getLocale());
+                            resultIntent.putExtra("nome", lampada.getNome());
+                            resultIntent.putExtra("potenza", lampada.getPotenza());
+                            setResult(RESULT_OK, resultIntent);
+                            finish();
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            Toast.makeText(AggiungiLampade.this, "Non riesco ad inserire i dati" + error, Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 });
             }
 
         });
 
-        refLampade.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Toast.makeText(AggiungiLampade.this, "Lampada aggiunta con successo", Toast.LENGTH_SHORT).show();
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(AggiungiLampade.this, "Non riesco ad inserire i dati" + error, Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     public void autoCompleteMenu(String[] elenco, AutoCompleteTextView autoCompleteTextView) {

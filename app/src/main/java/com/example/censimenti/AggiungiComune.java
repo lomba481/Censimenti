@@ -30,10 +30,10 @@ import java.util.List;
 
 public class AggiungiComune extends AppCompatActivity {
     TextInputEditText nomeComune, nCommessa;
-    TextView elencoUtenti;
+    TextView elencoUtenti, textView;
 
     Button salva, indietro;
-    String key;
+    String key, modifica;
     boolean[] selectUtente;
     ArrayList<Integer> utentiList = new ArrayList<>();
 
@@ -47,8 +47,16 @@ public class AggiungiComune extends AppCompatActivity {
         nCommessa = findViewById(R.id.numCommessa);
         elencoUtenti = findViewById(R.id.selezionaUtenti);
         key = getIntent().getStringExtra("key");
+        modifica = getIntent().getStringExtra("modifica");
+        if (modifica == null) {
+            textView.setText("Aggiungi Comune");
+        }
+        else {
+            textView.setText("Modifica Comune");
+        }
         salva = findViewById(R.id.saveBtn);
         indietro = findViewById(R.id.backBtn);
+        textView = findViewById(R.id.textComuni);
 
         DatabaseReference cRef = refComuni.child(key);
         cRef.addListenerForSingleValueEvent(new ValueEventListener() {

@@ -121,15 +121,16 @@ public class EdificiActivity extends AppCompatActivity {
             headerRow.createCell(0).setCellValue("Comune");
             headerRow.createCell(1).setCellValue("Edificio");
             headerRow.createCell(2).setCellValue("Piano");
-            headerRow.createCell(3).setCellValue("Locale");
-            headerRow.createCell(4).setCellValue("Numero");
-            headerRow.createCell(5).setCellValue("Tipo");
-            headerRow.createCell(6).setCellValue("Nome");
-            headerRow.createCell(7).setCellValue("Potenza");
-            headerRow.createCell(8).setCellValue("Sorgente");
-            headerRow.createCell(9).setCellValue("Attacco");
-            headerRow.createCell(10).setCellValue("Installazione");
-            headerRow.createCell(11).setCellValue("Foto");
+            headerRow.createCell(3).setCellValue("Screenshot");
+            headerRow.createCell(4).setCellValue("Locale");
+            headerRow.createCell(5).setCellValue("Numero");
+            headerRow.createCell(6).setCellValue("Tipo");
+            headerRow.createCell(7).setCellValue("Nome");
+            headerRow.createCell(8).setCellValue("Potenza");
+            headerRow.createCell(9).setCellValue("Sorgente");
+            headerRow.createCell(10).setCellValue("Attacco");
+            headerRow.createCell(11).setCellValue("Installazione");
+            headerRow.createCell(12).setCellValue("Foto");
 
             Row headerRow1 = sheet1.createRow(0);
             headerRow1.createCell(0).setCellValue("Comune");
@@ -145,6 +146,7 @@ public class EdificiActivity extends AppCompatActivity {
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     for (DataSnapshot comuneSnapshot : snapshot.getChildren()) {
                         String chiave = comuneSnapshot.getKey();
+                        boolean screen = false;
 
                         if (chiave.equals(keyCommessa)) {
                             String nomeComune = comuneSnapshot.child("nome").getValue(String.class);
@@ -152,8 +154,13 @@ public class EdificiActivity extends AppCompatActivity {
                             for (DataSnapshot edificioSnapshot : comuneSnapshot.child("Edifici").getChildren()) {
                                 String nomeEdificio = edificioSnapshot.child("nome").getValue(String.class);
 
+
                                 for (DataSnapshot planimetriaSnapshot : edificioSnapshot.child("Planimetrie").getChildren()) {
                                     String nomePlanimetria = planimetriaSnapshot.child("nome").getValue(String.class);
+                                    String screenshot = planimetriaSnapshot.child("Screenshot").getValue(String.class);
+                                    if (screen) {
+                                        screen = false;
+                                    }
 
                                     for (DataSnapshot lampadaSnapshot : planimetriaSnapshot.child("Lampade").getChildren()) {
                                         String locale = lampadaSnapshot.child("locale").getValue(String.class);
@@ -170,16 +177,22 @@ public class EdificiActivity extends AppCompatActivity {
                                         row.createCell(0).setCellValue(nomeComune);
                                         row.createCell(1).setCellValue(nomeEdificio);
                                         row.createCell(2).setCellValue(nomePlanimetria);
-                                        row.createCell(3).setCellValue(locale);
-                                        row.createCell(4).setCellValue(id);
-                                        row.createCell(5).setCellValue(tipo);
-                                        row.createCell(6).setCellValue(nome);
-                                        row.createCell(7).setCellValue(potenza);
-                                        row.createCell(8).setCellValue(sorgente);
-                                        row.createCell(9).setCellValue(attacco);
-                                        row.createCell(10).setCellValue(installazione);
+                                        if(!screen) {
+                                            row.createCell(3).setCellValue(screenshot);
+                                            screen = true;
+                                        }else {
+                                            row.createCell(3).setCellValue("");
+                                        }
+                                        row.createCell(4).setCellValue(locale);
+                                        row.createCell(5).setCellValue(id);
+                                        row.createCell(6).setCellValue(tipo);
+                                        row.createCell(7).setCellValue(nome);
+                                        row.createCell(8).setCellValue(potenza);
+                                        row.createCell(9).setCellValue(sorgente);
+                                        row.createCell(10).setCellValue(attacco);
+                                        row.createCell(11).setCellValue(installazione);
 //                                        row.createCell(11).setCellValue(foto);
-                                        Cell cell = row.createCell(11);
+                                        Cell cell = row.createCell(12);
                                         cell.setCellValue(foto);
                                         CreationHelper createHelper = workbook.getCreationHelper();
                                         Hyperlink hyperlink = createHelper.createHyperlink(HyperlinkType.URL);
@@ -226,7 +239,7 @@ public class EdificiActivity extends AppCompatActivity {
 
 //                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
                         File file = new File(getApplicationContext().getExternalFilesDir("Download"),  "DatiExcel.xlsx");
-                        Log.d("azaz", ""+getApplicationContext().getExternalFilesDir("Download"));
+
 //                    }
 
                     try {

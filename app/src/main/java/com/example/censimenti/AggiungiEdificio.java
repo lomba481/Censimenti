@@ -5,6 +5,7 @@ import static com.example.censimenti.AdapterEdifici.refEdifici;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -19,9 +20,10 @@ import com.google.firebase.database.ValueEventListener;
 
 public class AggiungiEdificio extends AppCompatActivity {
     TextInputEditText nomeEdificio, indirizzoEdificio;
+    TextView textView;
 
     Button salva, indietro;
-    String  keyEdificio;
+    String  keyEdificio, modifica;
 
 
     @Override
@@ -31,8 +33,17 @@ public class AggiungiEdificio extends AppCompatActivity {
 
         nomeEdificio = findViewById(R.id.nomeEdificio);
         indirizzoEdificio = findViewById(R.id.indirizzo);
+        textView = findViewById(R.id.textEdifici);
+
 
         keyEdificio = getIntent().getStringExtra("keyEdificio");
+        modifica = getIntent().getStringExtra("modifica");
+        if (modifica == null) {
+            textView.setText("Aggiungi Edificio");
+        }
+        else {
+            textView.setText("Modifica Edificio");
+        }
 
         salva = findViewById(R.id.saveBtn);
         indietro = findViewById(R.id.backBtn);

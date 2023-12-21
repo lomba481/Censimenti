@@ -60,6 +60,7 @@ public class AdapterEdifici extends FirebaseRecyclerAdapter<Edificio, AdapterEdi
                                     if (chiave == chiave1) {
                                         Intent intent = new Intent(context.getApplicationContext(), AggiungiEdificio.class);
                                         intent.putExtra("keyEdificio", chiave);
+                                        intent.putExtra("modifica", "si");
                                         context.startActivity(intent);
                                     }
                                 }

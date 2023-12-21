@@ -32,6 +32,7 @@ import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -51,6 +52,7 @@ public class AggiungiLocale extends AppCompatActivity {
     TextView textView;
     float x, y;
     ImageView precedente, successivo;
+    CircularProgressIndicator progressIndicator;
     String input= null;
     Uri uri;
     List<Uri> uriList = new ArrayList<>();
@@ -70,7 +72,7 @@ public class AggiungiLocale extends AppCompatActivity {
         textView = findViewById(R.id.textLocale);
         precedente = findViewById(R.id.precedente);
         successivo = findViewById(R.id.successivo);
-
+        progressIndicator = findViewById(R.id.progressIndicatorLoc);
 
 
 
@@ -127,11 +129,6 @@ public class AggiungiLocale extends AppCompatActivity {
                                     imageView.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
-//                                            if (uri != null) {
-//                                                Intent intent = new Intent(AggiungiLocale.this, VisualizzaFoto.class);
-//                                                intent.setData(uri);
-//                                                startActivity(intent);
-//                                            }
                                              if (s != null) {
                                                 Intent intent = new Intent(AggiungiLocale.this, VisualizzaFoto.class);
                                                 intent.putExtra("url", s);
@@ -202,6 +199,7 @@ public class AggiungiLocale extends AppCompatActivity {
                     Toast.makeText(AggiungiLocale.this, "Scrivi il locale secondo la sintassi suggerita", Toast.LENGTH_SHORT).show();
                 }
                 else {
+                    progressIndicator.setVisibility(View.VISIBLE);
                     Locale locale = new Locale(nomeLocale.getText().toString(),
                             note.getText().toString(),
                             url, Kx, Ky);
@@ -214,6 +212,7 @@ public class AggiungiLocale extends AppCompatActivity {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                                     Toast.makeText(AggiungiLocale.this, "Locale aggiunto con successo", Toast.LENGTH_SHORT).show();
+                                    finish();
                                 }
 
                                 @Override
@@ -224,7 +223,7 @@ public class AggiungiLocale extends AppCompatActivity {
                         } else {
                             addDataFirebase(locale, uriList);
                         }
-                        finish();
+
                     }catch (FileNotFoundException e) {
                         throw new RuntimeException(e);
 
@@ -296,12 +295,24 @@ public class AggiungiLocale extends AppCompatActivity {
                             // Fai qualcosa dopo che il ciclo è finito e tutti i caricamenti sono completati
                             String url1 = "";
                             for (String url : imageUrl) {
-                                url1 = url1  + url +", ";
+                                url1 = url1  + url +",";
                             }
 
 
                             locale.setFoto(url1);
                             refLocale.child(keyLocale).setValue(locale);
+                            refLocale.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    Toast.makeText(AggiungiLocale.this, "Locale aggiunto con successo", Toast.LENGTH_SHORT).show();
+                                    finish();
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+                                    Toast.makeText(AggiungiLocale.this, "Non riesco ad inserire i dati" + error, Toast.LENGTH_SHORT).show();
+                                }
+                            });
                         }
 
 
@@ -312,17 +323,5 @@ public class AggiungiLocale extends AppCompatActivity {
 
         }
 
-
-        refLocale.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Toast.makeText(AggiungiLocale.this, "Locale aggiunto con successo", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(AggiungiLocale.this, "Non riesco ad inserire i dati" + error, Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 }

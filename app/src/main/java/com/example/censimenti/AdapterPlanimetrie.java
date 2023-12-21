@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,7 +57,8 @@ public class AdapterPlanimetrie extends FirebaseRecyclerAdapter<Planimetria, Ada
                                     if (chiave == chiave1) {
                                         Intent intent = new Intent(context.getApplicationContext(), AggiungiPlanimetria.class);
                                         intent.putExtra("keyPlanimetria", chiave);
-                                        Log.d("dove", "modifica");
+                                        intent.putExtra("modifica", "si");
+
                                         context.startActivity(intent);
                                     }
                                 }

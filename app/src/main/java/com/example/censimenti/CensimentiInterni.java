@@ -8,12 +8,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.Icon;
+import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.Gravity;
@@ -23,6 +24,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -33,10 +35,16 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
+import java.io.ByteArrayOutputStream;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -50,7 +58,7 @@ public class CensimentiInterni extends AppCompatActivity {
     TextView textView;
     ImageView localeImage;
 
-    static DatabaseReference refLampade, refLocale;
+    static DatabaseReference refLampade, refLocale, refScreenshot;
 
     String keyPlanimetria, keyLampada, keyLocale;
     String imageUrl;
@@ -88,6 +96,8 @@ public class CensimentiInterni extends AppCompatActivity {
 
         refLampade = refPlanimetrie.child(keyPlanimetria).child("Lampade");
         refLocale = refPlanimetrie.child(keyPlanimetria).child("Locali");
+        refScreenshot = refPlanimetrie.child(keyPlanimetria).child("Screenshot");
+
 
         loadUrlAsDrawable(imageUrl, getApplicationContext(), new Icon.OnDrawableLoadedListener() {
             @Override
@@ -127,7 +137,7 @@ public class CensimentiInterni extends AppCompatActivity {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (isFABonLampada && !isFABonLocale) {
-                    Log.d("stato99", "lamp");
+
                     addNewCircle(event);
                     Intent intent = new Intent(CensimentiInterni.this, AggiungiLampade.class);
                     intent.putExtra("x", x);
@@ -141,12 +151,12 @@ public class CensimentiInterni extends AppCompatActivity {
                     intent.putExtra("nome", nome);
                     intent.putExtra("sorgente", sorgente);
                     intent.putExtra("tipo", tipo);
-                    Log.d("ricevuto2", ""+potenza);
+
 
                     startActivityForResult(intent, 1);
                 }
                 else if (isFABonLocale && !isFABonLampada) {
-                    Log.d("stato99", "loc");
+
                     keyLocale = refLocale.push().getKey();
                     addNewLocal(event);
                     Intent intent = new Intent(CensimentiInterni.this, AggiungiLocale.class);
@@ -157,8 +167,8 @@ public class CensimentiInterni extends AppCompatActivity {
 
                 }
                 else {
-                    Log.d("stato99", "nessuno");
-                    Log.d("stato", "lamp: " + isFABonLampada + " -- loc: " + isFABonLocale);
+
+
                     for (int i = 0; i < relativeLayout.getChildCount(); i++) {
                         View child = relativeLayout.getChildAt(i);
                         if (child instanceof CircleImageView) {
@@ -295,7 +305,7 @@ public class CensimentiInterni extends AppCompatActivity {
             attacco = data.getStringExtra("attacco");
             tipo = data.getStringExtra("tipo");
             potenza = data.getStringExtra("potenza");
-            Log.d("ricevuto", ""+potenza);
+
 
         }
     }
@@ -610,7 +620,69 @@ public class CensimentiInterni extends AppCompatActivity {
         indietroBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Ottieni la vista radice del layout dell'attività
+                View rootView = getWindow().getDecorView().getRootView();
+
+                // Crea uno screenshot della vista radice
+                Bitmap screenshot = getScreenshot(rootView);
+
+                // Salva lo screenshot su Firebase Storage
+                uploadScreenshot(screenshot);
+
+
+            }
+        });
+    }
+
+    private Bitmap getScreenshot(View view) {
+        view.setDrawingCacheEnabled(true);
+        Bitmap screenshot = Bitmap.createBitmap(view.getDrawingCache());
+        view.setDrawingCacheEnabled(false);
+        return screenshot;
+    }
+
+    private void uploadScreenshot(Bitmap screenshot) {
+        // Crea uno stream di byte dalla bitmap
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        screenshot.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        byte[] data = baos.toByteArray();
+
+        // Ottieni un riferimento al percorso di archiviazione su Firebase
+        StorageReference storageRef = storageC.child(keyPlanimetria);
+
+        // Carica i dati su Firebase Storage
+        storageRef.putBytes(data)
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        addScreenshotInfoToDatabase(storageRef);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(CensimentiInterni.this, "Errore durante il caricamento dello screenshot su Firebase Storage", Toast.LENGTH_SHORT).show();
+                        e.printStackTrace();
+                    }
+                });
+    }
+
+    private void addScreenshotInfoToDatabase(StorageReference storageRef) {
+        // Ottieni l'URL del file appena caricato su Storage
+        storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(android.net.Uri uri) {
+                // Aggiungi informazioni al Realtime Database
+                DatabaseReference databaseRef = refScreenshot;
+                databaseRef.setValue(uri.toString());
+
+                Toast.makeText(CensimentiInterni.this, "Informazioni dello screenshot aggiunte al Realtime Database", Toast.LENGTH_SHORT).show();
                 finish();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(CensimentiInterni.this, "Errore nel recupero dell'URL dallo screenshot su Firebase Storage", Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
             }
         });
     }
